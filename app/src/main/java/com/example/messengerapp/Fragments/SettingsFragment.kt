@@ -40,7 +40,6 @@ class SettingsFragment : Fragment() {
     private var storageRef: StorageReference? = null
     private var coverChecker: String? = ""
     private var socialChecker: String? = ""
-    var builder: AlertDialog.Builder?= null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,6 +125,7 @@ class SettingsFragment : Fragment() {
         }
 
         builder.setView(editText)
+
         builder.setPositiveButton("Create",DialogInterface.OnClickListener{
             dialog, which ->
             val str = editText.text.toString()
