@@ -58,7 +58,7 @@ class Users {
     fun getCover(): String?{
         return cover
     }
-    fun setCover(uid : String){
+    fun setCover(cover : String){
         this.cover = cover
     }
 

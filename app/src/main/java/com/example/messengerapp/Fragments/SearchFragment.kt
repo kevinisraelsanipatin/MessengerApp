@@ -3,23 +3,22 @@ package com.example.messengerapp.Fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.UserAdapter
 import com.example.messengerapp.ModelClasses.Users
-
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlinx.android.synthetic.main.fragment_search.*
 
 /**
  * A simple [Fragment] subclass.
@@ -36,11 +35,12 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_search, container, false)
+        val view = inflater.inflate(R.layout.fragment_search, container, false)
 
-        recyclerView = view.findViewById(R.id.searchList)
+        recyclerView = view?.findViewById(R.id.searchList)
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
+        recyclerView!!.adapter = userAdapter
         searchEditText = view.findViewById(R.id.searchUserET)
 
         mUsers = ArrayList()
@@ -91,7 +91,7 @@ class SearchFragment : Fragment() {
         })
     }
 
-    private fun searchForUser(str:String)
+    private fun searchForUser(str: String)
     {
         var firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
@@ -101,10 +101,12 @@ class SearchFragment : Fragment() {
             .endAt(str + "\uf8ff")
 
         queryUsers.addValueEventListener(object : ValueEventListener{
+
             override fun onDataChange(p0: DataSnapshot) {
                 (mUsers as ArrayList<Users>).clear()
 
                 for(snapshot in p0.children){
+                    Toast.makeText(context,"Toast por defecto", Toast.LENGTH_LONG).show()
                     val user : Users? = snapshot.getValue(Users::class.java)
                     if(!(user!!.getUID()).equals(firebaseUserID)){
                         (mUsers as ArrayList<Users>).add(user)
