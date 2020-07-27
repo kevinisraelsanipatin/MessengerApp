@@ -1,13 +1,14 @@
 package com.example.messengerapp
 
-import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ProgressBar
+import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.messengerapp.ModelClasses.Users
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -18,10 +19,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import com.google.gson.internal.bind.ObjectTypeAdapter
 import com.google.firebase.storage.StorageTask
-import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
@@ -30,7 +28,7 @@ class MessageChatActivity : AppCompatActivity() {
 
     var userIdVisit: String = ""
     var firebaseUser: FirebaseUser? = null
-
+    var msg: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
@@ -42,7 +40,7 @@ class MessageChatActivity : AppCompatActivity() {
         val reference = FirebaseDatabase.getInstance().reference
             .child("Users").child(userIdVisit)
 
-        reference.addValueEventListener(object : ValueEventListener{
+        reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 val user: Users? = p0.getValue(Users::class.java)
 
@@ -56,17 +54,16 @@ class MessageChatActivity : AppCompatActivity() {
         })
 
 
-        send_message_btn.setOnClickListener{
+        send_message_btn.setOnClickListener {
             val message = text_message.text.toString()
 
-            if(message == "")
-            {
-                Toast.makeText(this@MessageChatActivity,"Ingrese un mensaje primero...",
-                    Toast.LENGTH_LONG).show()
-            }
-            else
-            {
-                sendMessageToUser(firebaseUser!!.uid, userIdVisit,message)
+            if (message == "") {
+                Toast.makeText(
+                    this@MessageChatActivity, "Ingrese un mensaje primero...",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                sendMessageToUser(firebaseUser!!.uid, userIdVisit, message)
             }
             text_message.setText("")
         }
@@ -75,7 +72,7 @@ class MessageChatActivity : AppCompatActivity() {
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
             intent.type = "image/*"
-            startActivityForResult(Intent.createChooser(intent,"Pick Image"), 438)
+            startActivityForResult(Intent.createChooser(intent, "Pick Image"), 438)
         }
     }
 
@@ -83,29 +80,27 @@ class MessageChatActivity : AppCompatActivity() {
         val reference = FirebaseDatabase.getInstance().reference
         val messageKey = reference.push().key
 
-        val messageHashMap = HashMap<String,Any?>()
-        messageHashMap["sender"]=senderId
-        messageHashMap["message"]=message
-        messageHashMap["receiver"]=receiverId
-        messageHashMap["isseen"]=false
-        messageHashMap["url"]=""
-        messageHashMap["messageId"]=messageKey
+        val messageHashMap = HashMap<String, Any?>()
+        messageHashMap["sender"] = senderId
+        messageHashMap["message"] = message
+        messageHashMap["receiver"] = receiverId
+        messageHashMap["isseen"] = false
+        messageHashMap["url"] = ""
+        messageHashMap["messageId"] = messageKey
         reference.child("Chats")
             .child(messageKey!!)
             .setValue(messageHashMap)
-            .addOnCompleteListener{task ->
-                if(task.isSuccessful)
-                {
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     val chatsListReference = FirebaseDatabase.getInstance()
                         .reference
                         .child("ChatList")
                         .child(firebaseUser!!.uid)
                         .child(userIdVisit)
 
-                    chatsListReference.addListenerForSingleValueEvent(object : ValueEventListener{
+                    chatsListReference.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(p0: DataSnapshot) {
-                            if (!p0.exists())
-                            {
+                            if (!p0.exists()) {
                                 chatsListReference.child("id").setValue(userIdVisit)
                             }
                             val chatsListReceiverRef = FirebaseDatabase.getInstance()
@@ -115,6 +110,7 @@ class MessageChatActivity : AppCompatActivity() {
                                 .child(firebaseUser!!.uid)
                             chatsListReceiverRef.child("id").setValue(firebaseUser!!.uid)
                         }
+
                         override fun onCancelled(p0: DatabaseError) {
                         }
                     })
@@ -132,8 +128,7 @@ class MessageChatActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == 438 && resultCode == RESULT_OK && data != null && data!!.data != null)
-        {
+        if (requestCode == 438 && resultCode == RESULT_OK && data != null && data!!.data != null) {
             val progressBar = ProgressDialog(this)
             progressBar.setMessage("Cargando imagen, espere por favor...")
             progressBar.show()
@@ -147,31 +142,29 @@ class MessageChatActivity : AppCompatActivity() {
             var uploadTask: StorageTask<*>
             uploadTask = filePath.putFile(fileUri!!)
 
-            uploadTask.continueWithTask(Continuation <TaskSnapshot, Task<Uri>>{ task ->
-                if(!task.isSuccessful)
-                {
+            uploadTask.continueWithTask(Continuation<TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
                     task.exception?.let {
                         throw it
                     }
                 }
                 return@Continuation filePath.downloadUrl
             }).addOnCompleteListener { task ->
-                if(task.isSuccessful)
-                {
+                if (task.isSuccessful) {
                     val downloadUrl = task.result
                     val url = downloadUrl.toString()
 
-                    val messageHashMap = HashMap<String,Any?>()
-                    messageHashMap["sender"]=firebaseUser!!.uid
-                    messageHashMap["message"]= "Te envié una imagen"
-                    messageHashMap["receiver"]=userIdVisit
-                    messageHashMap["isseen"]=false
-                    messageHashMap["url"]=url
-                    messageHashMap["messageId"]=messageId
+                    val messageHashMap = HashMap<String, Any?>()
+                    messageHashMap["sender"] = firebaseUser!!.uid
+                    messageHashMap["message"] = "Te envié una imagen"
+                    messageHashMap["receiver"] = userIdVisit
+                    messageHashMap["isseen"] = false
+                    messageHashMap["url"] = url
+                    messageHashMap["messageId"] = messageId
 
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap)
                 }
-                }
+            }
         }
     }
 }
