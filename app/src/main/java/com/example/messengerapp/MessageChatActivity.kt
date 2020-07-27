@@ -9,6 +9,10 @@ import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.messengerapp.AdapterClasses.ChatAdapter
+import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.Users
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -23,12 +27,15 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
+import java.util.ArrayList
 
 class MessageChatActivity : AppCompatActivity() {
 
     var userIdVisit: String = ""
     var firebaseUser: FirebaseUser? = null
-    var msg: String = ""
+    var chatsAdapter: ChatAdapter? = null
+    var mChatList: List<Chat>? = null
+    lateinit var recycler_view_chats: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
@@ -37,6 +44,11 @@ class MessageChatActivity : AppCompatActivity() {
         userIdVisit = intent.getStringExtra("visit_id")
         firebaseUser = FirebaseAuth.getInstance().currentUser
 
+        recycler_view_chats = findViewById(R.id.recycler_view_chats)
+        recycler_view_chats.setHasFixedSize(true)
+        var linearLayoutManager = LinearLayoutManager(applicationContext)
+        linearLayoutManager.stackFromEnd = true
+        recycler_view_chats.layoutManager = linearLayoutManager
         val reference = FirebaseDatabase.getInstance().reference
             .child("Users").child(userIdVisit)
 
@@ -46,6 +58,7 @@ class MessageChatActivity : AppCompatActivity() {
 
                 username_mchat.text = user!!.getUserName()
                 Picasso.get().load(user.getProfile()).into(profile_image_mchat)
+                retrieveMessages(firebaseUser!!.uid, userIdVisit, user.getProfile())
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -74,6 +87,35 @@ class MessageChatActivity : AppCompatActivity() {
             intent.type = "image/*"
             startActivityForResult(Intent.createChooser(intent, "Pick Image"), 438)
         }
+    }
+
+    private fun retrieveMessages(senderId: String, receiverId: String?, receiverImageUrl: String?) {
+        mChatList = ArrayList()
+        val reference = FirebaseDatabase.getInstance().reference.child("Chats")
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                (mChatList as ArrayList).clear()
+                for (snapshot in p0.children) {
+                    val chat = snapshot.getValue(Chat::class.java)
+                    if (chat!!.getReceiver().equals(senderId) && chat.getSender().equals(receiverId)
+                        || chat.getReceiver().equals(receiverId) && chat.getSender()
+                            .equals(senderId)
+                    ) {
+                        (mChatList as ArrayList).add(chat)
+                    }
+                    chatsAdapter = ChatAdapter(
+                        this@MessageChatActivity,
+                        (mChatList as ArrayList),
+                        receiverImageUrl!!
+                    )
+                    recycler_view_chats.adapter = chatsAdapter
+                }
+            }
+        })
     }
 
     private fun sendMessageToUser(senderId: String, receiverId: String?, message: String) {
@@ -163,6 +205,7 @@ class MessageChatActivity : AppCompatActivity() {
                     messageHashMap["messageId"] = messageId
 
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap)
+                    progressBar.dismiss()
                 }
             }
         }
