@@ -247,6 +247,6 @@ class MessageChatActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        reference!!.addValueEventListener(seenListener!!)
+        reference!!.removeEventListener(seenListener!!)
     }
 }
