@@ -3,7 +3,7 @@ package com.example.messengerapp.ModelClasses
 class ChatList {
     private var id:String =""
     constructor(){
-        
+
     }
     constructor(id: String) {
         this.id = id
