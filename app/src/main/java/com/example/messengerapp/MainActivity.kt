@@ -16,6 +16,7 @@ import androidx.viewpager.widget.ViewPager
 import com.example.messengerapp.Fragments.ChatsFragment
 import com.example.messengerapp.Fragments.SearchFragment
 import com.example.messengerapp.Fragments.SettingsFragment
+import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.Users
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -38,29 +39,50 @@ class MainActivity : AppCompatActivity() {
         firebaseUser = FirebaseAuth.getInstance().currentUser
         refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
 
-        val toolbar:androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
-        supportActionBar!!.title =""
+        supportActionBar!!.title = ""
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
-        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+       
+        val reference = FirebaseDatabase.getInstance().reference
+            .child("Chats")
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
 
-        viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats")
-        viewPagerAdapter.AddFragment(SearchFragment(),title = "Search")
-        viewPagerAdapter.AddFragment(SettingsFragment(), title = "Settings")
-
-        viewPager.adapter = viewPagerAdapter
-        tabLayout.setupWithViewPager(viewPager)
-
-        //display username and profile picture
-        refUsers!!.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
-                if(p0.exists())
-                {
+                val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
+                var unreadMessages = 0
+                for (d in p0.children) {
+                    val chat = d.getValue(Chat::class.java)
+                    if (chat!!.getReceiver().equals(firebaseUser!!.uid) && !chat.isSeen()!!) {
+                        unreadMessages += 1
+                    }
+                }
+                if (unreadMessages == 0) {
+                    viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats")
+                } else {
+                    viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats ($unreadMessages)")
+                }
+                viewPagerAdapter.AddFragment(SearchFragment(), title = "Search")
+                viewPagerAdapter.AddFragment(SettingsFragment(), title = "Settings")
+
+                viewPager.adapter = viewPagerAdapter
+                tabLayout.setupWithViewPager(viewPager)
+            }
+
+        })
+        //display username and profile picture
+        refUsers!!.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                if (p0.exists()) {
                     val user: Users? = p0.getValue(Users::class.java)
                     user_name.text = user!!.getUserName()
-                    Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile).into(profile_image)
+                    Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile)
+                        .into(profile_image)
                 }
             }
 
@@ -93,9 +115,8 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    internal class ViewPagerAdapter(FragmentManager: FragmentManager):
-        FragmentPagerAdapter(FragmentManager)
-    {
+    internal class ViewPagerAdapter(FragmentManager: FragmentManager) :
+        FragmentPagerAdapter(FragmentManager) {
         private val fragments: ArrayList<Fragment>
         private val titles: ArrayList<String>
 
@@ -104,8 +125,7 @@ class MainActivity : AppCompatActivity() {
             titles = ArrayList<String>()
         }
 
-        override fun getItem(position: Int): Fragment
-        {
+        override fun getItem(position: Int): Fragment {
             return fragments[position]
         }
 
@@ -113,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             return fragments.size
         }
 
-        fun AddFragment(fragment: Fragment,title: String){
+        fun AddFragment(fragment: Fragment, title: String) {
             fragments.add(fragment)
             titles.add(title)
         }
