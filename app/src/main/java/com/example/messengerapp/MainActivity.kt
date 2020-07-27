@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
-       
+
         val reference = FirebaseDatabase.getInstance().reference
             .child("Chats")
         reference.addValueEventListener(object : ValueEventListener {

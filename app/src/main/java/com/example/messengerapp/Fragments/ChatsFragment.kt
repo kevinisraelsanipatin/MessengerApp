@@ -37,6 +37,7 @@ class ChatsFragment : Fragment() {
         recycler_view_chatlist = view.findViewById(R.id.recycler_view_chatlist)
         recycler_view_chatlist.setHasFixedSize(true)
         recycler_view_chatlist.layoutManager = LinearLayoutManager(context!!)
+        mUsersChatList = ArrayList()
         val ref =
             FirebaseDatabase.getInstance().reference.child("ChatList").child(firebaseUser!!.uid)
         ref.addValueEventListener(object : ValueEventListener {
