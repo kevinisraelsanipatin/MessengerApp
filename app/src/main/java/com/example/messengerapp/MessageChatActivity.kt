@@ -24,6 +24,7 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import java.util.ArrayList
