@@ -121,7 +121,7 @@ class ChatAdapter(
         val chat: Chat = mChatList[position]
         Picasso.get().load(imageUrl).into(holder.profile_image)
         // images messages
-        if (chat.getMessage().equals("sent you an image.") && !chat.getUrl().equals(null)) {
+        if (chat.getMessage().equals("Te envié una imagen") && !chat.getUrl().equals(null)) {
             if (chat.getSender().equals(firebaseUser!!.uid)) {
                 holder.show_text_message!!.visibility = View.GONE
                 holder.right_image_view!!.visibility = View.VISIBLE

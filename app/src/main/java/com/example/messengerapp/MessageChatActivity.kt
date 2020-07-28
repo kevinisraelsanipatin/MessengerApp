@@ -1,20 +1,19 @@
 package com.example.messengerapp
 
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.ChatAdapter
+import com.example.messengerapp.Fragments.APIService
 import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Notifications.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +24,8 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
+import retrofit2.Call
+import retrofit2.Callback
 import java.util.ArrayList
 
 class MessageChatActivity : AppCompatActivity() {
@@ -34,6 +35,7 @@ class MessageChatActivity : AppCompatActivity() {
     var chatsAdapter: ChatAdapter? = null
     var mChatList: List<Chat>? = null
     var reference: DatabaseReference? = null
+    var notify = false
     lateinit var recycler_view_chats: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,8 @@ class MessageChatActivity : AppCompatActivity() {
         intent = intent
         userIdVisit = intent.getStringExtra("visit_id")
         firebaseUser = FirebaseAuth.getInstance().currentUser
-
+        apiService =
+            Client.Client.getClient("https://fcm.googleapis.com/")!!.create(APIService::class.java)
         recycler_view_chats = findViewById(R.id.recycler_view_chats)
         recycler_view_chats.setHasFixedSize(true)
         var linearLayoutManager = LinearLayoutManager(applicationContext)
@@ -76,7 +79,7 @@ class MessageChatActivity : AppCompatActivity() {
 
         send_message_btn.setOnClickListener {
             val message = text_message.text.toString()
-
+            notify = true
             if (message == "") {
                 Toast.makeText(
                     this@MessageChatActivity, "Ingrese un mensaje primero...",
@@ -89,6 +92,7 @@ class MessageChatActivity : AppCompatActivity() {
         }
 
         attact_image_file_btn.setOnClickListener {
+            notify = true
             val intent = Intent()
             intent.action = Intent.ACTION_GET_CONTENT
             intent.type = "image/*"
@@ -166,14 +170,84 @@ class MessageChatActivity : AppCompatActivity() {
                         }
                     })
 
-                    //Implementación de Notificaciones usando FCM
-
-                    val reference = FirebaseDatabase.getInstance().reference
-                        .child("Users").child(firebaseUser!!.uid)
-
-
                 }
             }
+        val userReference = FirebaseDatabase.getInstance().reference
+            .child("Users").child(firebaseUser!!.uid)
+
+        userReference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val user = p0.getValue(Users::class.java)
+                if (notify) {
+                    sendNotification(receiverId, user!!.getUserName(), message)
+                }
+                notify = false
+            }
+
+        })
+    }
+
+    var apiService: APIService? = null
+    private fun sendNotification(receiverId: String?, userName: String?, message: String) {
+        val ref = FirebaseDatabase.getInstance().getReference().child("Tokens")
+        val query = ref.orderByKey().equalTo(receiverId)
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (d in p0.children) {
+                    val token: Token? = d.getValue(Token::class.java)
+                    val data =
+                        Data(
+                            firebaseUser!!.uid,
+                            R.mipmap.ic_launcher,
+                            "$userName: $message",
+                            "New Message",
+                            userIdVisit
+                        )
+                    val sender = Sender(data!!, token!!.getToken().toString())
+                    apiService!!.sendNotification(sender).enqueue(object: Callback<Response> {
+                        /**
+                         * Invoked for a received HTTP response.
+                         *
+                         *
+                         * Note: An HTTP response may still indicate an application-level failure such as a 404 or 500.
+                         * Call [Response.isSuccessful] to determine if the response indicates success.
+                         */
+                        override fun onResponse(
+                            call: Call<Response>,
+                            response: retrofit2.Response<Response>
+                        ) {
+                            if (response.code() == 200) {
+                                if (response.body()!!.success !== 1) {
+                                    Toast.makeText(
+                                        this@MessageChatActivity,
+                                        "Failed, Nothing happened",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                }
+                            }
+                        }
+
+                        /**
+                         * Invoked when a network exception occurred talking to the server or when an unexpected
+                         * exception occurred creating the request or processing the response.
+                         */
+                        override fun onFailure(call: Call<Response>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+                }
+            }
+
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -214,6 +288,34 @@ class MessageChatActivity : AppCompatActivity() {
                     messageHashMap["messageId"] = messageId
 
                     ref.child("Chats").child(messageId!!).setValue(messageHashMap)
+                        .addOnCompleteListener {
+                            task
+                            if (task.isSuccessful) {
+                                //Implementación de Notificaciones usando FCM
+
+                                val reference = FirebaseDatabase.getInstance().reference
+                                    .child("Users").child(firebaseUser!!.uid)
+
+                                reference.addValueEventListener(object : ValueEventListener {
+                                    override fun onCancelled(p0: DatabaseError) {
+                                        TODO("Not yet implemented")
+                                    }
+
+                                    override fun onDataChange(p0: DataSnapshot) {
+                                        val user = p0.getValue(Users::class.java)
+                                        if (notify) {
+                                            sendNotification(
+                                                userIdVisit,
+                                                user!!.getUserName(),
+                                                "Te envié una imagen"
+                                            )
+                                        }
+                                        notify = false
+                                    }
+
+                                })
+                            }
+                        }
                     progressBar.dismiss()
                 }
             }
@@ -249,4 +351,8 @@ class MessageChatActivity : AppCompatActivity() {
         super.onPause()
         reference!!.removeEventListener(seenListener!!)
     }
+}
+
+private fun <T> Call<T>.enqueue(callback: Callback<Response>) {
+
 }
