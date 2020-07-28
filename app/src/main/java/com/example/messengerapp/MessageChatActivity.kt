@@ -54,7 +54,7 @@ class MessageChatActivity : AppCompatActivity() {
         userIdVisit = intent.getStringExtra("visit_id")
         firebaseUser = FirebaseAuth.getInstance().currentUser
         apiService =
-            Client.Client.getClient("https://fcm.googleapis.com/fcm/send")!!.create(APIService::class.java)
+            Client.Client.getClient("https://fcm.googleapis.com/")!!.create(APIService::class.java)
         recycler_view_chats = findViewById(R.id.recycler_view_chats)
         recycler_view_chats.setHasFixedSize(true)
         var linearLayoutManager = LinearLayoutManager(applicationContext)
