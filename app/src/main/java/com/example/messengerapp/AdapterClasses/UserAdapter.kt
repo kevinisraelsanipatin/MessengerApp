@@ -50,11 +50,11 @@ class UserAdapter(
 
         holder.itemView.setOnClickListener {
             val options = arrayOf<CharSequence>(
-                "Send message",
-                "Visit profile"
+                "Enviar Mensaje",
+                "Ver perfil"
                 )
             val builder : AlertDialog.Builder = AlertDialog.Builder(mContext)
-            builder.setTitle("What do you want?")
+            builder.setTitle("¿Qué deseas?")
             builder.setItems(options, DialogInterface.OnClickListener{dialog, position ->
                 if(position == 0)
                 {

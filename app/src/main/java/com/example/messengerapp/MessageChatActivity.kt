@@ -226,12 +226,12 @@ class MessageChatActivity : AppCompatActivity() {
                             notificationResponse: Response<NotificationResponse>
                         ) {
                             if (notificationResponse.code() == 200) {
-                                if (notificationResponse.body()!!.success !== 1) {
+                                if (notificationResponse.body()!!.success != 1) {
                                     Toast.makeText(
                                         this@MessageChatActivity,
                                         "Failed, Nothing happened",
                                         Toast.LENGTH_SHORT
-                                    )
+                                    ).show()
                                 }
                             }
                         }

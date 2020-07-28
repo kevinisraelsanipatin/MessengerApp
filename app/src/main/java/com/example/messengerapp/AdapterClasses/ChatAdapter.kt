@@ -91,7 +91,6 @@ class ChatAdapter(
      * @return The total number of items in this adapter.
      */
     override fun getItemCount(): Int {
-
         return mChatList.size
     }
 
@@ -138,17 +137,21 @@ class ChatAdapter(
 
         // sent and seen
         if (position == mChatList.size - 1) {
-            if(chat.isSeen()!!){
-                holder.text_seen!!.text = "seen"
-                if (chat.getMessage().equals("sent you an image.") && !chat.getUrl().equals(null)) {
+            if (chat.isSeen()!!) {
+                holder.text_seen!!.text = "visto"
+                if (chat.getMessage().equals("Te envié una imagen") && !chat.getUrl()
+                        .equals(null)
+                ) {
                     val lp: RelativeLayout.LayoutParams? =
                         holder.text_seen!!.layoutParams as RelativeLayout.LayoutParams
                     lp!!.setMargins(0, 245, 10, 0)
                     holder.text_seen!!.layoutParams = lp
                 }
-            }else{
-                holder.text_seen!!.text = "sent"
-                if (chat.getMessage().equals("sent you an image.") && !chat.getUrl().equals(null)) {
+            } else {
+                holder.text_seen!!.text = "enviado"
+                if (chat.getMessage().equals("Te envié una imagen") && !chat.getUrl()
+                        .equals(null)
+                ) {
                     val lp: RelativeLayout.LayoutParams? =
                         holder.text_seen!!.layoutParams as RelativeLayout.LayoutParams
                     lp!!.setMargins(0, 245, 10, 0)

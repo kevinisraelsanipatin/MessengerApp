@@ -64,8 +64,8 @@ class ChatsFragment : Fragment() {
 
     private fun updateToken(token: String?) {
         val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
-        val token = Token(token!!)
-        ref.child(firebaseUser!!.uid).setValue(token)
+        val token1 = Token(token!!)
+        ref.child(firebaseUser!!.uid).setValue(token1)
 
     }
 
