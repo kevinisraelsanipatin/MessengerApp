@@ -24,9 +24,9 @@ import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Response
 import java.util.ArrayList
 
 class MessageChatActivity : AppCompatActivity() {
@@ -213,20 +213,20 @@ class MessageChatActivity : AppCompatActivity() {
                             userIdVisit
                         )
                     val sender = Sender(data!!, token!!.getToken().toString())
-                    apiService!!.sendNotification(sender).enqueue(object: Callback<Response> {
+                    apiService!!.sendNotification(sender).enqueue(object: Callback<NotificationResponse> {
                         /**
                          * Invoked for a received HTTP response.
                          *
                          *
                          * Note: An HTTP response may still indicate an application-level failure such as a 404 or 500.
-                         * Call [Response.isSuccessful] to determine if the response indicates success.
+                         * Call [NotificationResponse.isSuccessful] to determine if the response indicates success.
                          */
                         override fun onResponse(
-                            call: Call<Response>,
-                            response: retrofit2.Response<Response>
+                            call: Call<NotificationResponse>,
+                            notificationResponse: Response<NotificationResponse>
                         ) {
-                            if (response.code() == 200) {
-                                if (response.body()!!.success !== 1) {
+                            if (notificationResponse.code() == 200) {
+                                if (notificationResponse.body()!!.success !== 1) {
                                     Toast.makeText(
                                         this@MessageChatActivity,
                                         "Failed, Nothing happened",
@@ -240,7 +240,7 @@ class MessageChatActivity : AppCompatActivity() {
                          * Invoked when a network exception occurred talking to the server or when an unexpected
                          * exception occurred creating the request or processing the response.
                          */
-                        override fun onFailure(call: Call<Response>, t: Throwable) {
+                        override fun onFailure(call: Call<NotificationResponse>, t: Throwable) {
                             TODO("Not yet implemented")
                         }
 
@@ -354,6 +354,6 @@ class MessageChatActivity : AppCompatActivity() {
     }
 }
 
-private fun <T> Call<T>.enqueue(callback: Callback<Response>) {
+private fun <T> Call<T>.enqueue(callback: Callback<NotificationResponse>) {
 
 }

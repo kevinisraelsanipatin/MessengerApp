@@ -2,6 +2,7 @@ package com.example.messengerapp.Fragments;
 
 import com.example.messengerapp.Notifications.Sender;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -16,5 +17,5 @@ public interface APIService {
     })
 
     @POST("fcm/send")
-    Call<Response> sendNotification(@Body Sender body);
+    Call<ResponseBody> sendNotification(@Body Sender body);
 }

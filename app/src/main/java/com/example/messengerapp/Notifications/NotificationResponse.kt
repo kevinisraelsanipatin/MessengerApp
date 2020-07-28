@@ -1,6 +1,6 @@
 package com.example.messengerapp.Notifications
 
-class Response {
+class NotificationResponse {
     var success = 0
 
 }
