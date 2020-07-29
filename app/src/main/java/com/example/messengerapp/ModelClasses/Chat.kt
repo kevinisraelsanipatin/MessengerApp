@@ -1,12 +1,12 @@
 package com.example.messengerapp.ModelClasses
 
 class Chat {
-    private var sender: String = ""
-    private var message: String = ""
-    private var receiver: String = ""
-    private var isseen: Boolean = false
-    private var url: String = ""
-    private var messageId: String = ""
+    private var sender: String? = ""
+    private var message: String? = ""
+    private var receiver: String? = ""
+    private var isseen: Boolean? = false
+    private var url: String? = ""
+    private var messageId: String? = ""
     constructor(){
 
     }
@@ -50,11 +50,11 @@ class Chat {
         this.receiver = receiver
     }
 
-    fun isSeen(): Boolean? {
+    fun isIsSeen(): Boolean? {
         return isseen
     }
 
-    fun setisSeen(isSeen:Boolean) {
+    fun setIsSeen(isSeen:Boolean) {
         this.isseen = isSeen
     }
 

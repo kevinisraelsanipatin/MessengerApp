@@ -1,12 +1,14 @@
 package com.example.messengerapp.AdapterClasses
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.ChatList
@@ -137,7 +139,8 @@ class ChatAdapter(
 
         // sent and seen
         if (position == mChatList.size - 1) {
-            if (chat.isSeen()!!) {
+            Log.d("Chat Tag", chat.toString())
+            if (chat.isIsSeen()!!) {
                 holder.text_seen!!.text = "visto"
                 if (chat.getMessage().equals("Te envié una imagen") && !chat.getUrl()
                         .equals(null)
