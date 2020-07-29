@@ -38,6 +38,7 @@ class MessageChatActivity : AppCompatActivity() {
     var reference: DatabaseReference? = null
     var notify = false
     lateinit var recycler_view_chats: RecyclerView
+    private var seenListener: ValueEventListener? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
@@ -100,7 +101,7 @@ class MessageChatActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, "Pick Image"), 438)
         }
 
-        seenMessage(userIdVisit)
+
     }
 
     private fun retrieveMessages(senderId: String, receiverId: String?, receiverImageUrl: String?) {
@@ -130,6 +131,7 @@ class MessageChatActivity : AppCompatActivity() {
                 }
             }
         })
+        seenMessage(userIdVisit)
     }
 
     private fun sendMessageToUser(senderId: String, receiverId: String?, message: String) {
@@ -212,7 +214,7 @@ class MessageChatActivity : AppCompatActivity() {
                             "New Message",
                             userIdVisit
                         )
-                    val sender = Sender(data!!, token!!.getToken().toString())
+                    val sender = Sender(data, token!!.getToken().toString())
                     apiService!!.sendNotification(sender).enqueue(object: Callback<NotificationResponse> {
                         /**
                          * Invoked for a received HTTP response.
@@ -223,10 +225,10 @@ class MessageChatActivity : AppCompatActivity() {
                          */
                         override fun onResponse(
                             call: Call<NotificationResponse>,
-                            notificationResponse: Response<NotificationResponse>
+                            response: Response<NotificationResponse>
                         ) {
-                            if (notificationResponse.code() == 200) {
-                                if (notificationResponse.body()!!.success != 1) {
+                            if (response.code() == 200) {
+                                if (response.body()!!.success != 1) {
                                     Toast.makeText(
                                         this@MessageChatActivity,
                                         "Failed, Nothing happened",
@@ -241,7 +243,7 @@ class MessageChatActivity : AppCompatActivity() {
                          * exception occurred creating the request or processing the response.
                          */
                         override fun onFailure(call: Call<NotificationResponse>, t: Throwable) {
-                            TODO("Not yet implemented")
+
                         }
 
                     })
@@ -323,13 +325,13 @@ class MessageChatActivity : AppCompatActivity() {
         }
     }
 
-    var seenListener: ValueEventListener? = null
+
     private fun seenMessage(userId: String) {
         val reference = FirebaseDatabase.getInstance().reference
             .child("Chats")
         seenListener = reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
