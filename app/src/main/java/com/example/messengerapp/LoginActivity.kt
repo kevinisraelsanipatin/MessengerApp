@@ -4,15 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.example.messengerapp.Presenter.Presenter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
 
 class LoginActivity : AppCompatActivity() {
-
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var refUsers: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +25,12 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-        mAuth = FirebaseAuth.getInstance()
         login_btn.setOnClickListener {
-            loginUser()
+            Presenter.login(email_login.text.toString(),password_login.text.toString(),this@LoginActivity)
         }
     }
 
-    private fun loginUser() {
+    /*private fun loginUser() {
         val email:String = email_login.text.toString()
         val password:String = password_login.text.toString()
 
@@ -60,8 +56,7 @@ class LoginActivity : AppCompatActivity() {
                     {
                         Toast.makeText(this@LoginActivity,"Mensaje de Error: "+task.exception!!.message.toString(),Toast.LENGTH_LONG).show()
                     }
-
             }
         }
-    }
+    }*/
 }

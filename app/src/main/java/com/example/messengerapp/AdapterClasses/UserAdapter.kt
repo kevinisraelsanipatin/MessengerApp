@@ -8,12 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.messengerapp.MainActivity
 import com.example.messengerapp.MessageChatActivity
-import com.example.messengerapp.ModelClasses.Chat
-import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Model.ModelClasses.Chat
+import com.example.messengerapp.Model.ModelClasses.Users
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_main.*
 
 class UserAdapter(
     mContext: Context,

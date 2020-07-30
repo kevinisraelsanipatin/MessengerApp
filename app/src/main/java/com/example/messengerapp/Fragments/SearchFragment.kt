@@ -1,18 +1,19 @@
 package com.example.messengerapp.Fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.UserAdapter
-import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Model.ModelClasses.Users
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -36,7 +37,6 @@ class SearchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container, false)
-
         recyclerView = view?.findViewById(R.id.searchList)
         recyclerView!!.setHasFixedSize(true)
         recyclerView!!.layoutManager = LinearLayoutManager(context)
@@ -44,7 +44,7 @@ class SearchFragment : Fragment() {
         searchEditText = view.findViewById(R.id.searchUserET)
 
         mUsers = ArrayList()
-        retrieveAllUsers()
+
 
         searchEditText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -52,7 +52,12 @@ class SearchFragment : Fragment() {
             }
 
             override fun onTextChanged(cs: CharSequence?, start: Int, before: Int, count: Int) {
-                searchForUser(cs.toString().toLowerCase())
+                try {
+                    searchForUser(cs.toString().toLowerCase())
+                } catch (_: NullPointerException) {
+                    Log.e("NullPointSearchFragment", "Error $context:context ")
+                }
+
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -63,7 +68,13 @@ class SearchFragment : Fragment() {
         return view
     }
 
-    private fun retrieveAllUsers() {
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        retrieveAllUsers(context)
+    }
+
+    private fun retrieveAllUsers(context: Context) {
         val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
         val refUsers = FirebaseDatabase.getInstance().reference.child("Users")
@@ -78,6 +89,8 @@ class SearchFragment : Fragment() {
                             (mUsers as ArrayList<Users>).add(user)
                         }
                     }
+                    Log.d("context", context.toString())
+                    Log.d("users", mUsers.toString())
                     userAdapter = UserAdapter(context!!, mUsers!!, false)
                     recyclerView!!.adapter = userAdapter
                 }
@@ -90,11 +103,12 @@ class SearchFragment : Fragment() {
     }
 
     private fun searchForUser(str: String) {
+        if (context == null) return
         val firebaseUserID = FirebaseAuth.getInstance().currentUser!!.uid
 
         val queryUsers = FirebaseDatabase.getInstance().reference
             .child("Users").orderByChild("search")
-            .startAt("str")
+            .startAt(str)
             .endAt(str + "\uf8ff")
 
         queryUsers.addValueEventListener(object : ValueEventListener {
@@ -103,14 +117,19 @@ class SearchFragment : Fragment() {
                 (mUsers as ArrayList<Users>).clear()
 
                 for (snapshot in p0.children) {
-                    Toast.makeText(context, "Toast por defecto", Toast.LENGTH_LONG).show()
+
                     val user: Users? = snapshot.getValue(Users::class.java)
                     if (!(user!!.getUID()).equals(firebaseUserID)) {
                         (mUsers as ArrayList<Users>).add(user)
                     }
                 }
-                userAdapter = UserAdapter(context!!, mUsers!!, false)
-                recyclerView!!.adapter = userAdapter
+                try {
+                    userAdapter = UserAdapter(context!!, mUsers!!, false)
+                    recyclerView!!.adapter = userAdapter
+                } catch (_: java.lang.NullPointerException) {
+                    Log.e("NullPESearch", "NullPESearch")
+                }
+
             }
 
             override fun onCancelled(p0: DatabaseError) {

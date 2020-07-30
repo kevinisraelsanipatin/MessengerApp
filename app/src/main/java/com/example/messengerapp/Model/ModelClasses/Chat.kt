@@ -1,4 +1,4 @@
-package com.example.messengerapp.ModelClasses
+package com.example.messengerapp.Model.ModelClasses
 
 class Chat {
     private var sender: String? = ""

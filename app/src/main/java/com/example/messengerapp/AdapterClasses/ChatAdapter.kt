@@ -8,16 +8,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.messengerapp.ModelClasses.Chat
-import com.example.messengerapp.ModelClasses.ChatList
+import com.example.messengerapp.Model.ModelClasses.Chat
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 class ChatAdapter(
     mContext: Context,

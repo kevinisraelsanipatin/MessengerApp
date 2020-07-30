@@ -1,6 +1,8 @@
 package com.example.messengerapp.Fragments
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +10,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.UserAdapter
-import com.example.messengerapp.ModelClasses.ChatList
-import com.example.messengerapp.ModelClasses.Users
-import com.example.messengerapp.Notifications.FirebaseInstance
+import com.example.messengerapp.Model.ModelClasses.ChatList
+import com.example.messengerapp.Model.ModelClasses.Users
 import com.example.messengerapp.Notifications.Token
+import com.example.messengerapp.Presenter.Presenter
 
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +33,7 @@ class ChatsFragment : Fragment() {
     private var mUsersChatList: List<ChatList>? = null
     lateinit var recycler_view_chatlist: RecyclerView
     var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser!!
+    var loadOnAttach: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,56 +44,32 @@ class ChatsFragment : Fragment() {
         recycler_view_chatlist.setHasFixedSize(true)
         recycler_view_chatlist.layoutManager = LinearLayoutManager(context!!)
         mUsersChatList = ArrayList()
-        val ref =
-            FirebaseDatabase.getInstance().reference.child("ChatList").child(firebaseUser!!.uid)
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                (mUsersChatList as ArrayList).clear()
-                for (dataSnapshot in p0.children) {
-                    val chatlist = dataSnapshot.getValue(ChatList::class.java)
-                    (mUsersChatList as ArrayList).add(chatlist!!)
-                }
-                retrieveChatList()
-            }
-
-        })
-        updateToken(FirebaseInstanceId.getInstance().token)
+        if (context == null) {
+            loadOnAttach = true
+        } else {
+            Presenter.manageChats(context!!, this)
+        }
+        Presenter.updateToken(FirebaseInstanceId.getInstance().token)
         return view
     }
 
-    private fun updateToken(token: String?) {
-        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
-        val token1 = Token(token!!)
-        ref.child(firebaseUser!!.uid).setValue(token1)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (loadOnAttach) Presenter.manageChats(context, this)
 
     }
 
-    private fun retrieveChatList() {
-        mUsers = ArrayList()
-        val ref = FirebaseDatabase.getInstance().reference.child("Users")
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
-            }
+    override fun onResume() {
+        super.onResume()
+        Presenter.manageChats(context!!, this)
+    }
 
-            override fun onDataChange(p0: DataSnapshot) {
-                (mUsers as ArrayList).clear()
-                for (dataSnapshot in p0.children) {
-                    val user = dataSnapshot.getValue(Users::class.java)
-                    for (eachChatList in mUsersChatList!!) {
-                        if (user!!.getUID().equals(eachChatList.getId())) {
-                            (mUsers as ArrayList<Users>).add(user!!)
-                        }
-                    }
-                }
-                userAdapter = UserAdapter(context!!, mUsers as ArrayList<Users>, true)
-                recycler_view_chatlist.adapter = userAdapter
-            }
+    fun updateAdapter(userAdapter: UserAdapter) {
+        this.userAdapter = userAdapter
+        recycler_view_chatlist.adapter = userAdapter
+    }
 
-        })
+    fun updateChatList(mUsersChatList: List<ChatList>) {
+        this.mUsersChatList = mUsersChatList
     }
 }

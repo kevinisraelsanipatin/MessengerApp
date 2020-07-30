@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
-import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Model.ModelClasses.Users
 
 import com.example.messengerapp.R
 import com.google.android.gms.tasks.Continuation

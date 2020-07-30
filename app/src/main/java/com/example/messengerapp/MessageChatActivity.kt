@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.ChatAdapter
 import com.example.messengerapp.Fragments.APIService
-import com.example.messengerapp.ModelClasses.Chat
-import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Model.ModelClasses.Chat
+import com.example.messengerapp.Model.ModelClasses.Users
 import com.example.messengerapp.Notifications.*
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
@@ -109,7 +109,7 @@ class MessageChatActivity : AppCompatActivity() {
         val reference = FirebaseDatabase.getInstance().reference.child("Chats")
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onDataChange(p0: DataSnapshot) {
