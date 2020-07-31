@@ -30,33 +30,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    /*private fun loginUser() {
-        val email:String = email_login.text.toString()
-        val password:String = password_login.text.toString()
-
-        if (email == "")
-        {
-            Toast.makeText(this@LoginActivity,"Ingrese el usuario", Toast.LENGTH_LONG).show()
-        }
-        else if (password == "")
-        {
-            Toast.makeText(this@LoginActivity,"Ingrese el usuario", Toast.LENGTH_LONG).show()
-        }
-        else{
-            mAuth.signInWithEmailAndPassword(email,password)
-                .addOnCompleteListener { task ->
-                    if(task.isSuccessful)
-                    {
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        finish()
-                    }
-                    else
-                    {
-                        Toast.makeText(this@LoginActivity,"Mensaje de Error: "+task.exception!!.message.toString(),Toast.LENGTH_LONG).show()
-                    }
-            }
-        }
-    }*/
 }

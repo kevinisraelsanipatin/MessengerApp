@@ -44,19 +44,13 @@ class ChatsFragment : Fragment() {
         recycler_view_chatlist.setHasFixedSize(true)
         recycler_view_chatlist.layoutManager = LinearLayoutManager(context!!)
         mUsersChatList = ArrayList()
-        if (context == null) {
-            loadOnAttach = true
-        } else {
-            Presenter.manageChats(context!!, this)
-        }
         Presenter.updateToken(FirebaseInstanceId.getInstance().token)
         return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (loadOnAttach) Presenter.manageChats(context, this)
-
+        Presenter.manageChats(context, this)
     }
 
     override fun onResume() {

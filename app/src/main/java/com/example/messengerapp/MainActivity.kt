@@ -14,6 +14,7 @@ import com.example.messengerapp.Fragments.SearchFragment
 import com.example.messengerapp.Fragments.SettingsFragment
 import com.example.messengerapp.Model.ModelClasses.Chat
 import com.example.messengerapp.Model.ModelClasses.Users
+import com.example.messengerapp.Presenter.Presenter
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -42,8 +43,7 @@ class MainActivity : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
 
-        val reference = FirebaseDatabase.getInstance().reference
-            .child("Chats")
+        val reference = Presenter.getChild("Chats", null)
         reference.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
@@ -138,21 +138,15 @@ class MainActivity : AppCompatActivity() {
             return titles[position]
         }
     }
-    // To model
-    private fun updateStatus(status: String) {
-        val ref = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
-        val hashMap = HashMap<String, Any>()
-        hashMap["status"] = status
-        ref.updateChildren(hashMap)
-    }
 
     override fun onResume() {
         super.onResume()
-        updateStatus("online")
+
+        Presenter.updateStatus("online")
     }
 
     override fun onPause() {
         super.onPause()
-        updateStatus("offline")
+        Presenter.updateStatus("offline")
     }
 }

@@ -26,9 +26,10 @@ class FirebaseMessaging : FirebaseMessagingService() {
         if (firebaseuser != null && sented == firebaseuser.uid) {
             if (currentOnlineUser != user) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendOreoNotification(mRemoteMessage)
-                } else {
+
                     sendNotification(mRemoteMessage)
+                } else {
+                    sendOreoNotification(mRemoteMessage)
                 }
             }
         }
@@ -44,7 +45,7 @@ class FirebaseMessaging : FirebaseMessagingService() {
         val j = user!!.replace("[\\D]".toRegex(), "").toInt()
         val intent = Intent(this, MessageChatActivity::class.java)
         val bundle = Bundle()
-        bundle.putString("userId", user)
+        bundle.putString("userid", user)
         intent.putExtras(bundle)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 

@@ -1,6 +1,5 @@
 package com.example.messengerapp.Model
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
@@ -15,13 +14,13 @@ import com.example.messengerapp.Presenter.Presenter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_login.*
 
 object Model {
     private val firebaseDbRef = FirebaseDatabase.getInstance().reference
     private val firebaseAuthRef = FirebaseAuth.getInstance()
     private var currentUser: FirebaseUser? = firebaseAuthRef.currentUser
     private var chatListListener: ValueEventListener? = null
+    private var isSearching = false
     fun loginUser(email: String, password: String, context: Context) {
 
         when {
@@ -87,12 +86,9 @@ object Model {
         })
     }
 
-    private fun retrieveChatList(
-        context: Context,
-        mUsersChatList: List<ChatList>
-    ) {
-        val ref = firebaseDbRef.child("Users")
-        //FirebaseDatabase.getInstance().reference.child("Users")
+    private fun retrieveChatList(context: Context, mUsersChatList: List<ChatList>) {
+        val ref = getChild("Users")
+
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
@@ -110,8 +106,122 @@ object Model {
                 }
                 Log.d("context", context.toString())
                 Log.d("users", mUsers.toString())
-                Presenter.updateFrag(UserAdapter(context!!, mUsers as ArrayList<Users>, true))
+                Presenter.updateChatFrag(UserAdapter(context!!, mUsers as ArrayList<Users>, true))
             }
         })
+    }
+
+    fun getUsersList(context: Context) {
+        if (currentUser == null) currentUser = firebaseAuthRef.currentUser
+        val firebaseUserID = currentUser!!.uid
+
+        val refUsers = getChild("Users")
+
+        refUsers.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(p0: DataSnapshot) {
+                val mUsers = ArrayList<Users>()
+                if (!isSearching) {
+                    for (snapshot in p0.children) {
+                        val user: Users? = snapshot.getValue(Users::class.java)
+                        if (!(user!!.getUID()).equals(firebaseUserID)) {
+                            mUsers.add(user)
+                        }
+                    }
+                    Presenter.updateSearchList(UserAdapter(context, mUsers, false))
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
+    fun searchFor(string: String, context: Context) {
+        isSearching = string != ""
+        if (currentUser == null) currentUser = firebaseAuthRef.currentUser
+        val firebaseUserID = currentUser!!.uid
+
+        val queryUsers = getChild("Users").orderByChild("search")
+            .startAt(string)
+            .endAt(string + "\uf8ff")
+
+        queryUsers.addValueEventListener(object : ValueEventListener {
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val mUsers = ArrayList<Users>()
+                for (snapshot in p0.children) {
+
+                    val user: Users? = snapshot.getValue(Users::class.java)
+                    if (!(user!!.getUID()).equals(firebaseUserID)) {
+                        mUsers.add(user)
+                    }
+                }
+                try {
+                    Presenter.updateSearchList(UserAdapter(context, mUsers, false))
+
+                } catch (_: java.lang.NullPointerException) {
+                    Log.e("NullPESearch", "NullPESearch")
+                }
+
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+
+    }
+
+    fun updateStatus(status: String) {
+        val ref = getChild("Users").child(currentUser!!.uid)
+        val hashMap = HashMap<String, Any>()
+        hashMap["status"] = status
+        ref.updateChildren(hashMap)
+    }
+
+    fun isLoggedIn(): Boolean {
+        return currentUser != null
+    }
+
+    fun registerUser(username:String, email:String, password:String, context: Context) {
+        firebaseAuthRef.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val firebaseUserID = currentUser!!.uid
+                    val refUsers = getChild("Users")
+                        .child(firebaseUserID)
+
+                    val userHashMap = HashMap<String, Any>()
+                    userHashMap["uid"] = firebaseUserID
+                    userHashMap["username"] = username
+                    userHashMap["profile"] =
+                        "https://firebasestorage.googleapis.com/v0/b/chatapp-205b5.appspot.com/o/profile.png?alt=media&token=8aed6de1-33dd-4379-897f-afc7edcb83cf"
+                    userHashMap["cover"] =
+                        "https://firebasestorage.googleapis.com/v0/b/chatapp-205b5.appspot.com/o/cover.jpg?alt=media&token=e2b01e85-2f8a-4a10-8ebb-b8d32fa9c9f0"
+                    userHashMap["status"] = "offline"
+                    userHashMap["search"] = username.toLowerCase()
+                    userHashMap["facebook"] = "https://m.facebook.com"
+                    userHashMap["instagram"] = "https://m.instagram.com"
+                    userHashMap["website"] = "https://www.google.com"
+
+                    refUsers.updateChildren(userHashMap)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val intent =
+                                    Intent(context, MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                                (context as AppCompatActivity).finish()
+                            }
+                        }
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Mensaje de Error: " + task.exception!!.message.toString(),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 }

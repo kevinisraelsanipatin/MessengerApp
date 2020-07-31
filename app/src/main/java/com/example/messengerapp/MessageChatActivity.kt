@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -357,5 +358,7 @@ class MessageChatActivity : AppCompatActivity() {
 }
 
 private fun <T> Call<T>.enqueue(callback: Callback<NotificationResponse>) {
+    Log.d("Corroutine", "Corroutine bro")
+
 
 }
