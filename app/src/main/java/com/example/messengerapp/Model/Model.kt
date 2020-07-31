@@ -174,6 +174,7 @@ object Model {
     }
 
     fun updateStatus(status: String) {
+        if (currentUser == null) currentUser = firebaseAuthRef.currentUser
         val ref = getChild("Users").child(currentUser!!.uid)
         val hashMap = HashMap<String, Any>()
         hashMap["status"] = status
@@ -181,7 +182,7 @@ object Model {
     }
 
     fun isLoggedIn(): Boolean {
-        return currentUser != null
+        return firebaseAuthRef.currentUser != null
     }
 
     fun registerUser(username:String, email:String, password:String, context: Context) {

@@ -2,6 +2,7 @@ package com.example.messengerapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -27,14 +28,16 @@ class MainActivity : AppCompatActivity() {
 
     var refUsers: DatabaseReference? = null
     var firebaseUser: FirebaseUser? = null
-
+    var refUsers_listener: ValueEventListener? = null
+    var refChats: DatabaseReference? = null
+    var refChats_listener: ValueEventListener? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar_main)
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
-        refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+        Log.d("Mainacter", firebaseUser.toString())
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
@@ -43,36 +46,48 @@ class MainActivity : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
 
-        val reference = Presenter.getChild("Chats", null)
-        reference.addValueEventListener(object : ValueEventListener {
+        refChats = Presenter.getChild("Chats", null)
+        refChats_listener = refChats!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
             }
 
             override fun onDataChange(p0: DataSnapshot) {
+
                 val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
                 var unreadMessages = 0
+
                 for (d in p0.children) {
                     val chat = d.getValue(Chat::class.java)
-                    if (chat!!.getReceiver().equals(firebaseUser!!.uid) && !chat.isIsSeen()!!) {
+                    if (chat!!.getReceiver()
+                            .equals(firebaseUser!!.uid) && !chat.isIsSeen()!!
+                    ) {
                         unreadMessages += 1
                     }
                 }
+
                 if (unreadMessages == 0) {
                     viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats")
                 } else {
-                    viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats ($unreadMessages)")
+                    viewPagerAdapter.AddFragment(
+                        ChatsFragment(),
+                        title = "Chats ($unreadMessages)"
+                    )
                 }
                 viewPagerAdapter.AddFragment(SearchFragment(), title = "Search")
                 viewPagerAdapter.AddFragment(SettingsFragment(), title = "Settings")
 
                 viewPager.adapter = viewPagerAdapter
                 tabLayout.setupWithViewPager(viewPager)
+                    
             }
 
         })
         //display username and profile picture
-        refUsers!!.addValueEventListener(object : ValueEventListener {
+
+        refUsers =
+            FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
+        refUsers_listener = refUsers!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists()) {
                     val user: Users? = p0.getValue(Users::class.java)
@@ -86,6 +101,8 @@ class MainActivity : AppCompatActivity() {
 
             }
         })
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -100,11 +117,13 @@ class MainActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_logout -> {
-                FirebaseAuth.getInstance().signOut()
+                refChats!!.removeEventListener(refChats_listener!!)
+                refUsers!!.removeEventListener(refUsers_listener!!)
                 val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
                 finish()
+                FirebaseAuth.getInstance().signOut()
                 return true
             }
         }
@@ -141,12 +160,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         Presenter.updateStatus("online")
     }
 
     override fun onPause() {
         super.onPause()
-        Presenter.updateStatus("offline")
+        Presenter.updateStatus("oflline")
     }
 }
