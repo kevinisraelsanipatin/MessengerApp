@@ -3,9 +3,11 @@ package com.example.messengerapp.Presenter
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.messengerapp.AdapterClasses.ChatAdapter
 import com.example.messengerapp.AdapterClasses.UserAdapter
 import com.example.messengerapp.Fragments.ChatsFragment
 import com.example.messengerapp.Fragments.SearchFragment
+import com.example.messengerapp.MessageChatActivity
 import com.example.messengerapp.Model.Model
 import com.example.messengerapp.Model.ModelClasses.ChatList
 import com.example.messengerapp.Model.ModelClasses.Users
@@ -14,6 +16,7 @@ import com.google.firebase.database.DatabaseReference
 object Presenter {
     var chatFragRef: ChatsFragment? = null
     var searchFragment: SearchFragment? = null
+    var messageChat: MessageChatActivity? = null
     fun login(email: String, password: String, context: Context) {
         Model.loginUser(email, password, context)
     }
@@ -63,15 +66,37 @@ object Presenter {
     fun registerUser(username: String, email: String, password: String, context: Context) {
         when {
             username == "" -> {
-                Toast.makeText(context,"Ingrese el usuario", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
             }
             email == "" -> {
-                Toast.makeText(context,"Ingrese el usuario", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
             }
             password == "" -> {
-                Toast.makeText(context,"Ingrese el usuario", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
             }
             else -> Model.registerUser(username, email, password, context)
         }
+    }
+
+    fun retrieveChats(ref: MessageChatActivity, senderId: String,
+                      receiverId: String?,
+                      receiverImageUrl: String?,
+                      userIdVisit: String,
+                      context: Context) {
+        messageChat = ref
+        Model.retrieveMessages(senderId, receiverId, receiverImageUrl, userIdVisit, context)
+    }
+
+    fun updateChats(chatsAdapter: ChatAdapter){
+        messageChat!!.updateMessages(chatsAdapter)
+    }
+    fun removeListener(){
+        Model.removeListeners()
+    }
+    fun sendMessage(senderId: String,
+                    receiverId: String?,
+                    message: String,
+                    userIdVisit: String){
+        Model.sendMessageToUser(senderId, receiverId, message, userIdVisit)
     }
 }

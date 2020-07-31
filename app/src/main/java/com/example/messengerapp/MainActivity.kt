@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     var refUsers_listener: ValueEventListener? = null
     var refChats: DatabaseReference? = null
     var refChats_listener: ValueEventListener? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
 
+        // view functionality
         refChats = Presenter.getChild("Chats", null)
         refChats_listener = refChats!!.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -76,15 +78,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 viewPagerAdapter.AddFragment(SearchFragment(), title = "Search")
                 viewPagerAdapter.AddFragment(SettingsFragment(), title = "Settings")
-
                 viewPager.adapter = viewPagerAdapter
                 tabLayout.setupWithViewPager(viewPager)
-                    
             }
 
         })
-        //display username and profile picture
 
+        //display username and profile picture
         refUsers =
             FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
         refUsers_listener = refUsers!!.addValueEventListener(object : ValueEventListener {

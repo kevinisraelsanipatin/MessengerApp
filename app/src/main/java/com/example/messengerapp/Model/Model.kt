@@ -5,8 +5,11 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.messengerapp.AdapterClasses.ChatAdapter
 import com.example.messengerapp.AdapterClasses.UserAdapter
+import com.example.messengerapp.Fragments.APIService
 import com.example.messengerapp.MainActivity
+import com.example.messengerapp.Model.ModelClasses.Chat
 import com.example.messengerapp.Model.ModelClasses.ChatList
 import com.example.messengerapp.Model.ModelClasses.Users
 import com.example.messengerapp.Notifications.Token
@@ -15,12 +18,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 
+
 object Model {
     private val firebaseDbRef = FirebaseDatabase.getInstance().reference
     private val firebaseAuthRef = FirebaseAuth.getInstance()
     private var currentUser: FirebaseUser? = firebaseAuthRef.currentUser
     private var chatListListener: ValueEventListener? = null
     private var isSearching = false
+    private var seenListener: ValueEventListener? = null
+    private var reference: DatabaseReference? = null
     fun loginUser(email: String, password: String, context: Context) {
 
         when {
@@ -185,7 +191,7 @@ object Model {
         return firebaseAuthRef.currentUser != null
     }
 
-    fun registerUser(username:String, email:String, password:String, context: Context) {
+    fun registerUser(username: String, email: String, password: String, context: Context) {
         firebaseAuthRef.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -225,4 +231,123 @@ object Model {
                 }
             }
     }
+
+    //Model
+    fun retrieveMessages(
+        senderId: String,
+        receiverId: String?,
+        receiverImageUrl: String?,
+        userIdVisit: String,
+        context: Context
+    ) {
+
+        val reference = getChild("Chats")
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                var mChatList = ArrayList<Chat>()
+                for (snapshot in p0.children) {
+                    val chat = snapshot.getValue(Chat::class.java)
+                    if (chat!!.getReceiver().equals(senderId) && chat.getSender().equals(receiverId)
+                        || chat.getReceiver().equals(receiverId) && chat.getSender()
+                            .equals(senderId)
+                    ) {
+                        mChatList.add(chat)
+                    }
+                    Presenter.updateChats(
+                        ChatAdapter(
+                            context,
+                            (mChatList as java.util.ArrayList),
+                            receiverImageUrl!!
+                        )
+                    )
+                }
+            }
+        })
+        seenMessage(userIdVisit)
+    }
+
+    // Model
+    fun sendMessageToUser(
+        senderId: String,
+        receiverId: String?,
+        message: String,
+        userIdVisit: String
+    ) {
+        val reference = FirebaseDatabase.getInstance().reference
+        val messageKey = reference.push().key
+
+        val messageHashMap = HashMap<String, Any?>()
+        messageHashMap["sender"] = senderId
+        messageHashMap["message"] = message
+        messageHashMap["receiver"] = receiverId
+        messageHashMap["isseen"] = false
+        messageHashMap["url"] = ""
+        messageHashMap["messageId"] = messageKey
+        reference.child("Chats")
+            .child(messageKey!!)
+            .setValue(messageHashMap)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val chatsListReference = FirebaseDatabase.getInstance()
+                        .reference
+                        .child("ChatList")
+                        .child(firebaseAuthRef.currentUser!!.uid)
+                        .child(userIdVisit)
+
+                    chatsListReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(p0: DataSnapshot) {
+                            if (!p0.exists()) {
+                                chatsListReference.child("id").setValue(userIdVisit)
+                            }
+                            val chatsListReceiverRef = FirebaseDatabase.getInstance()
+                                .reference
+                                .child("ChatList")
+                                .child(userIdVisit)
+                                .child(firebaseAuthRef.currentUser!!.uid)
+                            chatsListReceiverRef.child("id")
+                                .setValue(firebaseAuthRef.currentUser!!.uid)
+                        }
+
+                        override fun onCancelled(p0: DatabaseError) {
+                        }
+                    })
+
+                }
+            }
+    }
+
+    private fun seenMessage(userId: String) {
+        reference = FirebaseDatabase.getInstance().reference
+            .child("Chats")
+        seenListener = reference!!.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (d in p0.children) {
+                    val chat = d.getValue(Chat::class.java)
+                    if (chat!!.getReceiver()
+                            .equals(firebaseAuthRef.currentUser!!.uid) && chat!!.getSender()
+                            .equals(userId)
+                    ) {
+                        val hashMap = HashMap<String, Any>()
+                        hashMap["isseen"] = true
+                        d.ref.updateChildren(hashMap)
+                    }
+                }
+            }
+
+        })
+    }
+
+    fun removeListeners() {
+        reference!!.removeEventListener(seenListener!!)
+    }
+
 }
+
