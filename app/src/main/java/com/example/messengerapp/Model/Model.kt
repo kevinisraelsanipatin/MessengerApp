@@ -7,12 +7,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.messengerapp.AdapterClasses.ChatAdapter
 import com.example.messengerapp.AdapterClasses.UserAdapter
-import com.example.messengerapp.Fragments.APIService
 import com.example.messengerapp.MainActivity
 import com.example.messengerapp.Model.ModelClasses.Chat
 import com.example.messengerapp.Model.ModelClasses.ChatList
 import com.example.messengerapp.Model.ModelClasses.Users
-import com.example.messengerapp.Notifications.Token
+
 import com.example.messengerapp.Presenter.Presenter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -65,8 +64,7 @@ object Model {
     }
 
     fun updateToken(token: String?) {
-        val token1 = Token(token!!)
-        firebaseDbRef.child("Tokens").child(currentUser!!.uid).setValue(token1)
+
     }
 
     fun getChatList(context: Context) {

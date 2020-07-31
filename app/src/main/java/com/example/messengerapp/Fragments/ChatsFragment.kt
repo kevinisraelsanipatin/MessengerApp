@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.AdapterClasses.UserAdapter
 import com.example.messengerapp.Model.ModelClasses.ChatList
 import com.example.messengerapp.Model.ModelClasses.Users
-import com.example.messengerapp.Notifications.Token
 import com.example.messengerapp.Presenter.Presenter
 
 import com.example.messengerapp.R
