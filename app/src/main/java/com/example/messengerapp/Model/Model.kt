@@ -17,8 +17,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 
-
+/**
+ * Clase Model donde se instancian ciertos valores para la comunicación con Firebase
+ */
 object Model {
+
+    /**
+     * Atributos de la clase Model
+     */
     private val firebaseDbRef = FirebaseDatabase.getInstance().reference
     private val firebaseAuthRef = FirebaseAuth.getInstance()
     private var currentUser: FirebaseUser? = firebaseAuthRef.currentUser
@@ -26,8 +32,14 @@ object Model {
     private var isSearching = false
     private var seenListener: ValueEventListener? = null
     private var reference: DatabaseReference? = null
-    fun loginUser(email: String, password: String, context: Context) {
 
+    /**
+     * Metodo loginUser
+     * parameter [email] corresponde al correo o email del usuario
+     * parameter [password] corresponde a la contraseña del usuario
+     * parameter [context] corresponde al ambiente de trabajo o vista en la cual se esta ejecutando la accion
+     */
+    fun loginUser(email: String, password: String, context: Context) {
         when {
             email == "" -> {
                 Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
@@ -55,18 +67,33 @@ object Model {
         }
     }
 
+    /**
+     * Metodo getChild obtiene la referencia en la BD de Firebase segun el parametro child
+     * parameter [child] corresponde al nombre del Objeto de la Base de Datos
+     */
     fun getChild(child: String): DatabaseReference {
         return firebaseDbRef.child(child)
     }
 
+    /**
+     * Metodo getChild obtiene la referencia en la BD de Firebase segun el parametro child y ref
+     * parameter [child] corresponde al nombre del Objeto de la Base de Datos
+     * parameter [ref] corresponde a una referencia especifica en la base de datos
+     */
     fun getChild(child: String, ref: DatabaseReference): DatabaseReference {
         return ref.child(child)
     }
 
+    /**
+     * Metodo updateToken usado para actualizar el token
+     */
     fun updateToken(token: String?) {
-
     }
 
+    /**
+     * Metodo getChatList utilizado para obtener la lista de chasts
+     * parameter [context] correspondiente al identificador del entorno en la app
+     */
     fun getChatList(context: Context) {
         Log.d("Model user", currentUser.toString())
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
@@ -76,7 +103,6 @@ object Model {
             override fun onCancelled(p0: DatabaseError) {
 
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 var mUsersChatList = ArrayList<ChatList>()
                 for (dataSnapshot in p0.children) {
@@ -90,6 +116,11 @@ object Model {
         })
     }
 
+    /**
+     * Metodo retrieveChatList usado para recuperar la lista de chats en base a una lista de chats de los usuarios
+     * parameter [context] correspondiente al identificador del entorno en la app
+     * parameter [mUsersChatList] correspondiente a la lista de Chats de cada Usuario
+     */
     private fun retrieveChatList(context: Context, mUsersChatList: List<ChatList>) {
         val ref = getChild("Users")
 
@@ -97,7 +128,6 @@ object Model {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 var mUsers = ArrayList<Users>()
                 for (dataSnapshot in p0.children) {
@@ -115,6 +145,10 @@ object Model {
         })
     }
 
+    /**
+     * Metodo getUsersList usado ara obtener la lista de usuarios
+     * parameter [context] correspondiente al identificador del entorno en la app
+     */
     fun getUsersList(context: Context) {
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
         val firebaseUserID = currentUser!!.uid
@@ -141,6 +175,11 @@ object Model {
         })
     }
 
+    /**
+     * Metodo searchFor utilizado para buscar usuarios por el ID
+     * parameter [string] corresponde al nombre usuario
+     * parameter [context] correspondiente al identificador del entorno en la app
+     */
     fun searchFor(string: String, context: Context) {
         isSearching = string != ""
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
@@ -177,6 +216,10 @@ object Model {
 
     }
 
+    /**
+     * Metodo updateStatus utilizado para actualizar el estado del Usuario
+     * parameter [status] corresponde al estado del usuario true o false
+     */
     fun updateStatus(status: String) {
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
         val ref = getChild("Users").child(currentUser!!.uid)
@@ -185,10 +228,20 @@ object Model {
         ref.updateChildren(hashMap)
     }
 
+    /**
+     * Metodo isLoggedIn que retorna un booleano de acuerdo a la autenticacion en Firebase
+     */
     fun isLoggedIn(): Boolean {
         return firebaseAuthRef.currentUser != null
     }
 
+    /**
+     * Metodo registerUser nos permite registrar un nuevo usuario en la Base de Datos de Firebase
+     * parameter [username] nombre de Usuario ingresado por pantalla
+     * parameter [email] email correspondiente al usuario
+     * parameter [password] contraseña del usuario
+     * parameter [context] correspondiente al identificador del entorno en la app
+     */
     fun registerUser(username: String, email: String, password: String, context: Context) {
         firebaseAuthRef.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -230,7 +283,14 @@ object Model {
             }
     }
 
-    //Model
+    /**
+     * Metodo retrieveMessages nos permite recuperar los mensajes de acuerdo a varios parametros
+     * parameter [senderId] corresponde al id del remitente
+     * parameter [receiverId] corresponde al id del receptor
+     * parameter [receiverImageUrl] corresponde a la url de la imagen del receptor
+     * parameter [userIdVisit] corresponde al id de la visita del usuario
+     * parameter [context] correspondiente al identificador del entorno en la app
+     */
     fun retrieveMessages(
         senderId: String,
         receiverId: String?,
@@ -268,7 +328,13 @@ object Model {
         seenMessage(userIdVisit)
     }
 
-    // Model
+    /**
+     * Metodo sendMessage nos permite enviar un mensaje desde un remitende hasta un receptor
+     * parameter [senderId] corresponde al id del remitende
+     * parameter [receiverId] corresponde al id del receptor
+     * parameter [message] corresponde al mensaje como tal
+     * parameter [userIdVisit] corresponde al id de la visita del usuario
+     */
     fun sendMessageToUser(
         senderId: String,
         receiverId: String?,
@@ -309,7 +375,6 @@ object Model {
                             chatsListReceiverRef.child("id")
                                 .setValue(firebaseAuthRef.currentUser!!.uid)
                         }
-
                         override fun onCancelled(p0: DatabaseError) {
                         }
                     })
@@ -318,6 +383,10 @@ object Model {
             }
     }
 
+    /**
+     * Metodo seenMessage usado para marcar como leido el mensaje "visto"
+     * parameter [userId] corresponde al id del usuario destinatario
+     */
     private fun seenMessage(userId: String) {
         reference = FirebaseDatabase.getInstance().reference
             .child("Chats")
@@ -325,7 +394,6 @@ object Model {
             override fun onCancelled(p0: DatabaseError) {
 
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 for (d in p0.children) {
                     val chat = d.getValue(Chat::class.java)
@@ -343,9 +411,11 @@ object Model {
         })
     }
 
+    /**
+     * Metodo removeListeners usado para eliminar posibles oyentes
+     */
     fun removeListeners() {
         reference!!.removeEventListener(seenListener!!)
     }
-
 }
 
