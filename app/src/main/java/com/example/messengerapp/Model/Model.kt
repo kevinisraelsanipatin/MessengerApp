@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 
 /**
- * Clase Model donde se instancian ciertos valores para la comunicación con Firebase
+ * Objeto [Model] permite la comunicacion con el presentador, y se implementan los metodos
  */
 object Model {
 
@@ -34,7 +34,8 @@ object Model {
     private var reference: DatabaseReference? = null
 
     /**
-     * Metodo loginUser
+     * Implementacion del metodo loginUser que permite verificar si un usuario esta registrado en la
+     * base de datos para su acceso a la app
      * parameter [email] corresponde al correo o email del usuario
      * parameter [password] corresponde a la contraseña del usuario
      * parameter [context] corresponde al ambiente de trabajo o vista en la cual se esta ejecutando la accion
@@ -42,10 +43,10 @@ object Model {
     fun loginUser(email: String, password: String, context: Context) {
         when {
             email == "" -> {
-                Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ingrese el email", Toast.LENGTH_LONG).show()
             }
             password == "" -> {
-                Toast.makeText(context, "Ingrese el usuario", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Ingrese el password", Toast.LENGTH_LONG).show()
             }
             else -> {
                 firebaseAuthRef.signInWithEmailAndPassword(email, password)
@@ -76,7 +77,7 @@ object Model {
     }
 
     /**
-     * Metodo getChild obtiene la referencia en la BD de Firebase segun el parametro child y ref
+     * Implementacion del metodo getChild que obtiene la referencia en la BD de Firebase segun el parametro child y ref
      * parameter [child] corresponde al nombre del Objeto de la Base de Datos
      * parameter [ref] corresponde a una referencia especifica en la base de datos
      */
@@ -85,13 +86,7 @@ object Model {
     }
 
     /**
-     * Metodo updateToken usado para actualizar el token
-     */
-    fun updateToken(token: String?) {
-    }
-
-    /**
-     * Metodo getChatList utilizado para obtener la lista de chasts
+     * Implementacion del metodo getChatList utilizado para obtener la lista de chasts
      * parameter [context] correspondiente al identificador del entorno en la app
      */
     fun getChatList(context: Context) {
@@ -146,7 +141,7 @@ object Model {
     }
 
     /**
-     * Metodo getUsersList usado ara obtener la lista de usuarios
+     * Implementacion del metodo getUsersList usado para obtener la lista de usuarios
      * parameter [context] correspondiente al identificador del entorno en la app
      */
     fun getUsersList(context: Context) {
@@ -176,7 +171,7 @@ object Model {
     }
 
     /**
-     * Metodo searchFor utilizado para buscar usuarios por el ID
+     * Implementacion del metodo searchFor utilizado para buscar usuarios por el ID
      * parameter [string] corresponde al nombre usuario
      * parameter [context] correspondiente al identificador del entorno en la app
      */
@@ -217,7 +212,7 @@ object Model {
     }
 
     /**
-     * Metodo updateStatus utilizado para actualizar el estado del Usuario
+     * Implementacion del metodo updateStatus utilizado para actualizar el estado del Usuario
      * parameter [status] corresponde al estado del usuario true o false
      */
     fun updateStatus(status: String) {
@@ -229,14 +224,14 @@ object Model {
     }
 
     /**
-     * Metodo isLoggedIn que retorna un booleano de acuerdo a la autenticacion en Firebase
+     * Implementacion del metodo isLoggedIn que retorna un booleano de acuerdo a la autenticacion en Firebase
      */
     fun isLoggedIn(): Boolean {
         return firebaseAuthRef.currentUser != null
     }
 
     /**
-     * Metodo registerUser nos permite registrar un nuevo usuario en la Base de Datos de Firebase
+     * Implementacion del metodo registerUser que nos permite registrar un nuevo usuario en la Base de Datos de Firebase
      * parameter [username] nombre de Usuario ingresado por pantalla
      * parameter [email] email correspondiente al usuario
      * parameter [password] contraseña del usuario
@@ -284,7 +279,7 @@ object Model {
     }
 
     /**
-     * Metodo retrieveMessages nos permite recuperar los mensajes de acuerdo a varios parametros
+     * Implementacion del metodo retrieveMessages que nos permite recuperar los mensajes de acuerdo a varios parametros
      * parameter [senderId] corresponde al id del remitente
      * parameter [receiverId] corresponde al id del receptor
      * parameter [receiverImageUrl] corresponde a la url de la imagen del receptor
@@ -329,7 +324,7 @@ object Model {
     }
 
     /**
-     * Metodo sendMessage nos permite enviar un mensaje desde un remitende hasta un receptor
+     * Implementacion del metodo sendMessageToUser que nos permite enviar un mensaje desde un remitende hasta un receptor
      * parameter [senderId] corresponde al id del remitende
      * parameter [receiverId] corresponde al id del receptor
      * parameter [message] corresponde al mensaje como tal
@@ -384,7 +379,7 @@ object Model {
     }
 
     /**
-     * Metodo seenMessage usado para marcar como leido el mensaje "visto"
+     * Implementacion del metodo seenMessage, usado para marcar como leido el mensaje "visto"
      * parameter [userId] corresponde al id del usuario destinatario
      */
     private fun seenMessage(userId: String) {
@@ -412,7 +407,7 @@ object Model {
     }
 
     /**
-     * Metodo removeListeners usado para eliminar posibles oyentes
+     * Implementacion del metodo removeListeners, usado para eliminar posibles oyentes
      */
     fun removeListeners() {
         reference!!.removeEventListener(seenListener!!)

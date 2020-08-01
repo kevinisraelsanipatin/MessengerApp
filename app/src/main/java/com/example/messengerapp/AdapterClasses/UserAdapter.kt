@@ -21,31 +21,49 @@ import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
+/**
+ * Clase [UserAdapter] es un adaptador para el usuario dentro de la aplicacion
+ */
 class UserAdapter(
     mContext: Context,
     mUsers: List<Users>,
     isChatCheck: Boolean
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder?>() {
+    /**
+     * Atributos del adaptador del Usuario
+     */
     private val mContext: Context
     private val mUsers: List<Users>
     private var isChatCheck: Boolean
 
+    /**
+     * Se inicializa los atributos del adaptador
+     */
     init {
         this.mUsers = mUsers
         this.mContext = mContext
         this.isChatCheck = isChatCheck
     }
 
+    /**
+     * Clase interna que permite tomar los atributos de cada usuario y mostrar en la app
+     */
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(mContext)
             .inflate(R.layout.user_search_item_layout, viewGroup, false)
         return UserAdapter.ViewHolder(view)
     }
 
+    /**
+     * Metodo getItemCount permite obtener la dimension de la lista de Usuarios
+     */
     override fun getItemCount(): Int {
         return mUsers.size
     }
 
+    /**
+     * Metodo onBindViewHolder permite enlazar a un usuario con el chat correspondiente al mismo
+     */
     override fun onBindViewHolder(holder: ViewHolder, i: Int) {
         val user: Users = mUsers[i]
         holder.userNameTxt.text = user!!.getUserName()
@@ -83,6 +101,11 @@ class UserAdapter(
         }
     }
 
+    /**
+     * Metodo retrieveLastMessage permite recuperar el ultimo mensaje enviado
+     * parameter [chatUserId]
+     * parameter [lasMessageTxt]
+     */
     private fun retrieveLastMessage(chatUserId: String?, lasMessageTxt: TextView) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val ref = FirebaseDatabase.getInstance().reference.child("Chats")
@@ -91,7 +114,6 @@ class UserAdapter(
             override fun onCancelled(p0: DatabaseError) {
 
             }
-
             override fun onDataChange(p0: DataSnapshot) {
                 for (d in p0.children) {
                     val chat = d.getValue(Chat::class.java)
@@ -111,6 +133,9 @@ class UserAdapter(
         })
     }
 
+    /**
+     * Clase ViewHolder permite inicalizar cada item de la vista con los atributos del usuario correspondiente
+     */
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var userNameTxt: TextView
         var profileImageView: CircleImageView

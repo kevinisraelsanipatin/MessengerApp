@@ -28,11 +28,17 @@ import com.google.firebase.database.ValueEventListener
  */
 class SearchFragment : Fragment() {
 
+    /**
+     * Atibutos del fragmento Searchfragment
+     */
     private var userAdapter: UserAdapter? = null
     private var mUsers: List<Users>? = null
     private var recyclerView: RecyclerView? = null
     private var searchEditText: EditText? = null
 
+    /**
+     * Metodo onCreareView que inicializa el ciclo de vida de un Fragmento del Activity
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,12 +73,18 @@ class SearchFragment : Fragment() {
         return view
     }
 
+    /**
+     * Metodo onAttach permite la comunicación con el presentador llamando al metodo getUsers
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         Presenter.getUsers(context, this)
     }
 
+    /**
+     * Metodo updateAdapter permite la actualización del fragmento con los usuarios registrdos en la App
+     */
     fun updateAdapter(userAdapter: UserAdapter) {
         this.userAdapter = userAdapter
         recyclerView!!.adapter = userAdapter

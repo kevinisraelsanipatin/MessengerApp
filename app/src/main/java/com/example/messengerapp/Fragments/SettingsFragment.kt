@@ -33,6 +33,9 @@ import kotlinx.android.synthetic.main.fragment_settings.view.*
  */
 class SettingsFragment : Fragment() {
 
+    /**
+     * Atributos del fragmento SettingsFragment
+     */
     var usersReference: DatabaseReference? = null
     var firebaseUser: FirebaseUser? = null
     private val RequestCode = 438
@@ -41,6 +44,9 @@ class SettingsFragment : Fragment() {
     private var coverChecker: String? = ""
     private var socialChecker: String? = ""
 
+    /**
+     * Metodo onCreareView que inicializa el ciclo de vida de un Fragmento del Activity
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,19 +76,19 @@ class SettingsFragment : Fragment() {
 
             }
         })
-
         view.profile_image_settings.setOnClickListener {
             pickImage()
         }
-
         view.cover_image_settings.setOnClickListener {
             coverChecker = "cover"
             pickImage()
         }
-
         return view
     }
 
+    /**
+     * Metodo pickImage permite dar acceso a las imagenes del dispositivo
+     */
     private fun pickImage() {
         val intent = Intent()
         intent.type = "image/*"
@@ -90,6 +96,9 @@ class SettingsFragment : Fragment() {
         startActivityForResult(intent, RequestCode)
     }
 
+    /**
+     * Metodo onActivityResult permite cargar la imagen obtenida del dispositvo en la base de datos de Firebase
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -100,6 +109,9 @@ class SettingsFragment : Fragment() {
         }
     }
 
+    /**
+     * Implementacion del metodo uploadImageToDatabase que permite cargar la imagen seleccionada del dispositivo
+     */
     private fun uploadImageToDatabase() {
         val progressBar = ProgressDialog(context)
         progressBar.setMessage("Cargando imagen, espere por favor...")

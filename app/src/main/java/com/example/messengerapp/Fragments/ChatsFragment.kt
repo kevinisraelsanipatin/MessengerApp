@@ -27,12 +27,20 @@ import com.google.firebase.iid.FirebaseInstanceId
  * A simple [Fragment] subclass.
  */
 class ChatsFragment : Fragment() {
+
+    /**
+     * Atributos del Fragmento ChastFragment
+     */
     private var userAdapter: UserAdapter? = null
     private var mUsers: List<Users>? = null
     private var mUsersChatList: List<ChatList>? = null
     lateinit var recycler_view_chatlist: RecyclerView
     var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser!!
     var loadOnAttach: Boolean = false
+
+    /**
+     * Metodo onCreareView que inicializa el ciclo de vida de un Fragmento del Activity
+     */
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,25 +51,37 @@ class ChatsFragment : Fragment() {
         recycler_view_chatlist.setHasFixedSize(true)
         recycler_view_chatlist.layoutManager = LinearLayoutManager(context!!)
         mUsersChatList = ArrayList()
-        Presenter.updateToken(FirebaseInstanceId.getInstance().token)
+        //Presenter.updateToken(FirebaseInstanceId.getInstance().token)
         return view
     }
 
+    /**
+     * Metodo onAttach permite la comunicación con la funcion manageChats del Presentador
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Presenter.manageChats(context, this)
     }
 
+    /**
+     * Metodo onResume permite la comunicación con la funcion manageChats del Presentador
+     */
     override fun onResume() {
         super.onResume()
         Presenter.manageChats(context!!, this)
     }
 
+    /**
+     * Metodo updateAdapter que permite la actualizacion de una parte de la vista
+     */
     fun updateAdapter(userAdapter: UserAdapter) {
         this.userAdapter = userAdapter
         recycler_view_chatlist.adapter = userAdapter
     }
 
+    /**
+     * Metodo updateChatList nos permite actualizar la lista de chats en el framento
+     */
     fun updateChatList(mUsersChatList: List<ChatList>) {
         this.mUsersChatList = mUsersChatList
     }

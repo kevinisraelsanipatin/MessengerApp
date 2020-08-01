@@ -1,7 +1,7 @@
 package com.example.messengerapp.Model.ModelClasses
 
 /**
- * Clase Chat donde se define sus atributos y metodos
+ * Clase [Chat] donde se define sus atributos y metodos
  */
 class Chat {
 

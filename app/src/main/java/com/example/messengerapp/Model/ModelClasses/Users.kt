@@ -1,7 +1,7 @@
 package com.example.messengerapp.Model.ModelClasses
 
 /**
- * Clase Users donde se definen sus atributos y metodos
+ * Clase [Users] donde se definen sus atributos y metodos
  */
 class Users {
 

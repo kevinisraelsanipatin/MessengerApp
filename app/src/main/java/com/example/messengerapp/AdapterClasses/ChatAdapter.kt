@@ -16,22 +16,35 @@ import com.google.firebase.auth.FirebaseUser
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
+/**
+ * Clase [ChatAdapter] es un adaptador para el chat dentro de la aplicacion
+ */
 class ChatAdapter(
     mContext: Context,
     mChatList: List<Chat>,
     imageUrl: String
 ) : RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+
+    /**
+     * Atributos de la clase ChatAdapter
+     */
     private val mContext: Context
     private val mChatList: List<Chat>
     private val imageUrl: String
     var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser!!
 
+    /**
+     * Se inicializan los atributos de la clase
+     */
     init {
         this.mChatList = mChatList
         this.mContext = mContext
         this.imageUrl = imageUrl
     }
 
+    /**
+     * Clase interna que permite tomar los atributos de cada chat y mostrar en la app
+     */
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var profile_image: CircleImageView? = null
         var show_text_message: TextView? = null
@@ -163,6 +176,9 @@ class ChatAdapter(
         }
     }
 
+    /**
+     * Metodo getItemViewType permite identificar la seleccion de un usuario mediante la posicion del mismo dentro de una lista
+     */
     override fun getItemViewType(position: Int): Int {
         return if (mChatList[position].getSender().equals(firebaseUser!!.uid)) {
             1
