@@ -10,8 +10,15 @@ import com.google.firebase.database.DatabaseReference
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
 
+/**
+ * Clase [LoginActivity] de tipo AppCompatActivity, gestiona la vista del Login
+ */
 class LoginActivity : AppCompatActivity() {
 
+    /**
+     * Al crear la vista se inicializan los datos necesarios para poblar la interfaz gráfica
+     * y vincular los elementos de la interfaz con sus respectivos eventos
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

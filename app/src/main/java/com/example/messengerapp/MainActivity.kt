@@ -24,14 +24,24 @@ import com.squareup.picasso.Picasso
 
 import kotlinx.android.synthetic.main.activity_main.*
 
+/**
+ * Clase [MainActivity] de tipo AppCompatActivity, gestiona la vista del Main
+ */
 class MainActivity : AppCompatActivity() {
 
+    /**
+     * Variables del activity
+     */
     var refUsers: DatabaseReference? = null
     var firebaseUser: FirebaseUser? = null
     var refUsers_listener: ValueEventListener? = null
     var refChats: DatabaseReference? = null
     var refChats_listener: ValueEventListener? = null
 
+    /**
+     * Al crear la vista se inicializan los datos necesarios para poblar la interfaz gráfica
+     * y vincular los elementos de la interfaz con sus respectivos eventos
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -53,12 +63,9 @@ class MainActivity : AppCompatActivity() {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
             }
-
             override fun onDataChange(p0: DataSnapshot) {
-
                 val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager)
                 var unreadMessages = 0
-
                 for (d in p0.children) {
                     val chat = d.getValue(Chat::class.java)
                     if (chat!!.getReceiver()
@@ -67,7 +74,6 @@ class MainActivity : AppCompatActivity() {
                         unreadMessages += 1
                     }
                 }
-
                 if (unreadMessages == 0) {
                     viewPagerAdapter.AddFragment(ChatsFragment(), title = "Chats")
                 } else {
@@ -81,9 +87,7 @@ class MainActivity : AppCompatActivity() {
                 viewPager.adapter = viewPagerAdapter
                 tabLayout.setupWithViewPager(viewPager)
             }
-
         })
-
         //display username and profile picture
         refUsers =
             FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
@@ -96,21 +100,25 @@ class MainActivity : AppCompatActivity() {
                         .into(profile_image)
                 }
             }
-
             override fun onCancelled(p0: DatabaseError) {
-
             }
         })
-
-
     }
 
+    /**
+     * Metodo onCreateOptionMenu permite crear el menu de opciones en la aplicacion
+     * @param menu
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
+    /**
+     * Metodo onOptionItemSelected permite seleccionar un item entre las opciones
+     * @param item
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -130,6 +138,10 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    /**
+     * Clase interna ViwePagerAdapter permite actualizar los fragmentos y titulos de la pagina
+     * @param FragmentManager
+     */
     internal class ViewPagerAdapter(FragmentManager: FragmentManager) :
         FragmentPagerAdapter(FragmentManager) {
         private val fragments: ArrayList<Fragment>
@@ -158,11 +170,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Metodo onResume permite la comunicacion con el metodo updateStatus del Presentador
+     */
     override fun onResume() {
         super.onResume()
         Presenter.updateStatus("online")
     }
 
+    /**
+     * Metodo onPause que permite la comunicacion con el metodo udateStatus del Presentador
+     */
     override fun onPause() {
         super.onPause()
         Presenter.updateStatus("oflline")

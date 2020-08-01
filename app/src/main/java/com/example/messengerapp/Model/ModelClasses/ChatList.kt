@@ -1,7 +1,11 @@
 package com.example.messengerapp.Model.ModelClasses
 
 /**
- * Clase [ChatList] donde se define la lista de Chats segun Id
+ * Clase encargada de definir el esquema del objeto ChatList en la aplicacion
+ * de mensajeria instananea
+ *
+ * @author Ismael Martinez - Kevin Sanipatin
+ * @version 01/08/2020 v1
  */
 class ChatList {
 

@@ -44,6 +44,7 @@ class ChatAdapter(
 
     /**
      * Clase interna que permite tomar los atributos de cada chat y mostrar en la app
+     * @param itemView
      */
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var profile_image: CircleImageView? = null
@@ -178,6 +179,7 @@ class ChatAdapter(
 
     /**
      * Metodo getItemViewType permite identificar la seleccion de un usuario mediante la posicion del mismo dentro de una lista
+     * @param position
      */
     override fun getItemViewType(position: Int): Int {
         return if (mChatList[position].getSender().equals(firebaseUser!!.uid)) {

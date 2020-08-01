@@ -8,8 +8,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_welcome.*
 
+/**
+ * Clase [WelcomeActivity] de tipoAppCompatActivity, gestiona la vista del Bienvenida
+ */
 class WelcomeActivity : AppCompatActivity() {
 
+    /**
+     * Variables del activity
+     */
     var firebaseUser: FirebaseUser?=null
 
     /**

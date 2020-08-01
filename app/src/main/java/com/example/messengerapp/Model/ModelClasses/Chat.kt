@@ -1,7 +1,11 @@
 package com.example.messengerapp.Model.ModelClasses
 
 /**
- * Clase [Chat] donde se define sus atributos y metodos
+ * Clase encargada de definir el esquema del objeto Chart en la aplicacion
+ * de mensajeria instananea
+ *
+ * @author Ismael Martinez - Kevin Sanipatin
+ * @version 01/08/2020 v1
  */
 class Chat {
 

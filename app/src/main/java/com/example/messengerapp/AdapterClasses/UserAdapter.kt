@@ -47,6 +47,8 @@ class UserAdapter(
 
     /**
      * Clase interna que permite tomar los atributos de cada usuario y mostrar en la app
+     * @param viewGroup
+     * @param viewType
      */
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(mContext)
@@ -63,6 +65,8 @@ class UserAdapter(
 
     /**
      * Metodo onBindViewHolder permite enlazar a un usuario con el chat correspondiente al mismo
+     * @param holder
+     * @param i
      */
     override fun onBindViewHolder(holder: ViewHolder, i: Int) {
         val user: Users = mUsers[i]
@@ -103,8 +107,8 @@ class UserAdapter(
 
     /**
      * Metodo retrieveLastMessage permite recuperar el ultimo mensaje enviado
-     * parameter [chatUserId]
-     * parameter [lasMessageTxt]
+     * @param chatUserId
+     * @param lasMessageTxt
      */
     private fun retrieveLastMessage(chatUserId: String?, lasMessageTxt: TextView) {
         val firebaseUser = FirebaseAuth.getInstance().currentUser

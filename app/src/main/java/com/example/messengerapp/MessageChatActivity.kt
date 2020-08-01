@@ -24,8 +24,14 @@ import com.google.firebase.storage.UploadTask.TaskSnapshot
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_message_chat.*
 
+/**
+ * Clase [MessageChatActivity] de tipoAppCompatActivity, gestiona la vista del Chat
+ */
 class MessageChatActivity : AppCompatActivity() {
 
+    /**
+     * Variables de la clase MessageChatActivity
+     */
     var userIdVisit: String = ""
     var firebaseUser: FirebaseUser? = null
     var chatsAdapter: ChatAdapter? = null
@@ -34,7 +40,10 @@ class MessageChatActivity : AppCompatActivity() {
     var notify = false
     lateinit var recycler_view_chats: RecyclerView
 
-
+    /**
+     * Al crear la vista se inicializan los datos necesarios para poblar la interfaz gráfica
+     * y vincular los elementos de la interfaz con sus respectivos eventos
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
@@ -78,8 +87,6 @@ class MessageChatActivity : AppCompatActivity() {
 
             }
         })
-
-
         send_message_btn.setOnClickListener {
             val message = text_message.text.toString()
             notify = true
@@ -104,11 +111,20 @@ class MessageChatActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Metodo updateMessages permite actualizar los mensajes en la vista
+     */
     fun updateMessages(chatsAdapter: ChatAdapter) {
         this.chatsAdapter = chatsAdapter
         recycler_view_chats.adapter = chatsAdapter
     }
 
+    /**
+     * Metodo onActivityResult obtiene un resultado de la actividad de acuerdo a ciertas acciones
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -177,6 +193,9 @@ class MessageChatActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Cuando el ciclo de vida de la app esta en Pause llama al metodo removeListener del Presentador
+     */
     override fun onPause() {
         super.onPause()
         Presenter.removeListener()

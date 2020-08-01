@@ -11,6 +11,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_register.*
 
+/**
+ * Clase [RegisterActivity] de tipoAppCompatActivity, gestiona la vista del Chat
+ */
 class RegisterActivity : AppCompatActivity() {
 
     /**
@@ -30,7 +33,6 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
         register_btn.setOnClickListener {
             Presenter.registerUser(
                 username_register.text.toString(),
