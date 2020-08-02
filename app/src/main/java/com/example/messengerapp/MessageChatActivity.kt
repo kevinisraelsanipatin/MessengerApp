@@ -121,9 +121,9 @@ class MessageChatActivity : AppCompatActivity() {
 
     /**
      * Metodo onActivityResult obtiene un resultado de la actividad de acuerdo a ciertas acciones
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * parameter [requestCode]
+     * parameter [resultCode]
+     * parameter [data]
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

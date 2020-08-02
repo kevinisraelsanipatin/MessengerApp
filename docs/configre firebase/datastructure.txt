@@ -1,0 +1,21 @@
+usuarios #collection of users
+    -uid #user id
+	-name #user name
+	-mail #email address
+	-uid #user id
+	-photoURL #url of photo
+	-lobbies #map of all lobbies a user has
+	    -lid #lobby id
+		-cid #contact user id
+
+lobby #collection of lobbies
+    -lib #lobby id
+	-uidO #user who started the lobby
+	-uidD #user who was contacted
+	-messages #map of messages sent
+	   -mid	#message id
+		-media #address of media uploaded
+		-text #the message itself
+		-uidO #sender id
+		-dateDelivered #date of delivery
+		-dateOpened #date message was opened
