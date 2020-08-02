@@ -17,8 +17,8 @@ import com.google.firebase.database.DatabaseReference
  * Clase encargada de implementar los metodos de la aplicacion
  * de mensajeria instantatea
  *
- * author Ismael Martinez - Kevin Sanipatin
- * version 01/08/2020 v1
+ * @author Ismael Martinez - Kevin Sanipatin
+ * @version 01/08/2020 v1
  */
 object Presenter {
 
@@ -31,9 +31,9 @@ object Presenter {
 
     /**
      * Metodo login que nos permite logearnos en la app
-     * parameter [email]
-     * parameter [password]
-     * parameter [context]
+     * @param email
+     * @param password
+     * @param context
      */
     fun login(email: String, password: String, context: Context) {
         Model.loginUser(email, password, context)
@@ -41,8 +41,8 @@ object Presenter {
 
     /**
      * Metodo getChild que obtiene una referencia de la base de datos
-     * parameter [child]
-     * parameter [dbref]
+     * @param child
+     * @param dbref
      */
     fun getChild(child: String, dbref: DatabaseReference?): DatabaseReference {
         return if (dbref == null) Model.getChild(child) else Model.getChild(child, dbref)
@@ -50,8 +50,8 @@ object Presenter {
 
     /**
      * Metodo manageChats permite loa gestion de los chats
-     * parameter [context]
-     * parameter [ref]
+     * @param context
+     * @param ref
      */
     fun manageChats(context: Context, ref: ChatsFragment) {
         chatFragRef = ref
@@ -60,7 +60,7 @@ object Presenter {
 
     /**
      * Metodo updateChatFrag permite actualizar un fragmento de la aplicación
-     * parameter [uadap]
+     * @param uadap
      */
     fun updateChatFrag(uadap: UserAdapter) {
         chatFragRef!!.updateAdapter(uadap)
@@ -68,7 +68,7 @@ object Presenter {
 
     /**
      * Metodo updateChatList permite actualizar la lista de chats de un usuario en el fragmento
-     * parameter [mUsersChatList]
+     * @param mUsersChatList
      */
     fun updateChatList(mUsersChatList: List<ChatList>) {
         chatFragRef!!.updateChatList(mUsersChatList)
@@ -76,8 +76,8 @@ object Presenter {
 
     /**
      * Metodo getUsers permite obtener todos los usuarios registrados en la app
-     * parameter [context]
-     * parameter [ref]
+     * @param context
+     * @param ref
      */
     fun getUsers(context: Context, ref: SearchFragment) {
         searchFragment = ref
@@ -86,7 +86,7 @@ object Presenter {
 
     /**
      * Metodo updateSearchList permite actualizar la lista en el fragmento de Busqueda de la App
-     * parameter [uadap]
+     * @param uadap
      */
     fun updateSearchList(uadap: UserAdapter) {
         searchFragment!!.updateAdapter(uadap)
@@ -94,8 +94,8 @@ object Presenter {
 
     /**
      * Metodo searchFor permite buscar un usuario de acuerdo al ingreso de caracteres
-     * parameter [string]
-     * parameter [context]
+     * @param string
+     * @param context
      */
     fun searchFor(string: String, context: Context) {
         Model.searchFor(string, context)
@@ -103,7 +103,7 @@ object Presenter {
 
     /**
      * Metodo updateStatus permite actualizar el estado del usuario, es decir activo o inativo
-     * parameter [status]
+     * @param status
      */
     fun updateStatus(status: String) {
         Model.updateStatus(status)
@@ -118,10 +118,10 @@ object Presenter {
 
     /**
      * Metodo registerUser permite registrar un usuario en la app
-     * parameter [username]
-     * parameter [email]
-     * parameter [password]
-     * parameter [context]
+     * @param username
+     * @param email
+     * @param password
+     * @param context
      */
     fun registerUser(username: String, email: String, password: String, context: Context) {
         when {
@@ -140,12 +140,12 @@ object Presenter {
 
     /**
      * Metodo retrieveChats nos permite recuperar los chats de acuerdo a ciertos parametros
-     * parameter [ref]
-     * parameter [senderId]
-     * parameter [receiverId]
-     * parameter [receiverImageUrl]
-     * parameter [userIdVisit]
-     * parameter [context]
+     * @param ref
+     * @param senderId
+     * @param receiverId
+     * @param receiverImageUrl
+     * @param userIdVisit
+     * @param context
      */
     fun retrieveChats(ref: MessageChatActivity, senderId: String,
                       receiverId: String?,
@@ -158,7 +158,7 @@ object Presenter {
 
     /**
      * Metodo updateChats permite actualizar los chats de los usuarios
-     * parameter [chatsAdapter]
+     * @param chatsAdapter
      */
     fun updateChats(chatsAdapter: ChatAdapter){
         messageChat!!.updateMessages(chatsAdapter)
@@ -173,10 +173,10 @@ object Presenter {
 
     /**
      * Metodo sendMessage permite enviar un mensaje de un remitente a un receotor
-     * parameter [senderId]
-     * parameter [receiverId]
-     * parameter [message]
-     * parameter [userIdVisit]
+     * @param senderId
+     * @param receiverId
+     * @param message
+     * @param userIdVisit
      */
     fun sendMessage(senderId: String,
                     receiverId: String?,

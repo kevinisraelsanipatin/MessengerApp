@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Metodo onCreateOptionMenu permite crear el menu de opciones en la aplicacion
-     * parameter [menu]
+     * @param menu
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Metodo onOptionItemSelected permite seleccionar un item entre las opciones
-     * parameter [item]
+     * @param item
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Clase interna ViwePagerAdapter permite actualizar los fragmentos y titulos de la pagina
-     * parameter [FragmentManager]
+     * @param FragmentManager
      */
     internal class ViewPagerAdapter(FragmentManager: FragmentManager) :
         FragmentPagerAdapter(FragmentManager) {

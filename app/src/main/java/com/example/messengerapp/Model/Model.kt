@@ -20,8 +20,8 @@ import com.google.firebase.database.*
  * Clase encargada de implementar los metodos de la aplicacion
  * de mensajeria instantatea
  *
- * author Ismael Martinez - Kevin Sanipatin
- * version 01/08/2020 v1
+ * @author Ismael Martinez - Kevin Sanipatin
+ * @version 01/08/2020 v1
  */
 object Model {
 
@@ -39,9 +39,9 @@ object Model {
     /**
      * Implementacion del metodo loginUser que permite verificar si un usuario esta registrado en la
      * base de datos para su acceso a la app
-     * parameter [email]  corresponde al correo o email del usuario
-     * parameter [password]  corresponde a la contraseña del usuario
-     * parameter [context]  corresponde al ambiente de trabajo o vista en la cual se esta ejecutando la accion
+     * @param email corresponde al correo o email del usuario
+     * @param password corresponde a la contraseña del usuario
+     * @param context corresponde al ambiente de trabajo o vista en la cual se esta ejecutando la accion
      */
     fun loginUser(email: String, password: String, context: Context) {
         when {
@@ -73,7 +73,7 @@ object Model {
 
     /**
      * Metodo getChild obtiene la referencia en la BD de Firebase segun el parametro child
-     * parameter [child]  corresponde al nombre del Objeto de la Base de Datos
+     * @param child corresponde al nombre del Objeto de la Base de Datos
      */
     fun getChild(child: String): DatabaseReference {
         return firebaseDbRef.child(child)
@@ -81,8 +81,8 @@ object Model {
 
     /**
      * Implementacion del metodo getChild que obtiene la referencia en la BD de Firebase segun el parametro child y ref
-     * parameter [child]  corresponde al nombre del Objeto de la Base de Datos
-     * parameter [ref]  corresponde a una referencia especifica en la base de datos
+     * @param child corresponde al nombre del Objeto de la Base de Datos
+     * @param ref corresponde a una referencia especifica en la base de datos
      */
     fun getChild(child: String, ref: DatabaseReference): DatabaseReference {
         return ref.child(child)
@@ -90,7 +90,7 @@ object Model {
 
     /**
      * Implementacion del metodo getChatList utilizado para obtener la lista de chasts
-     * parameter [context]  correspondiente al identificador del entorno en la app
+     * @param context correspondiente al identificador del entorno en la app
      */
     fun getChatList(context: Context) {
         Log.d("Model user", currentUser.toString())
@@ -116,8 +116,8 @@ object Model {
 
     /**
      * Metodo retrieveChatList usado para recuperar la lista de chats en base a una lista de chats de los usuarios
-     * parameter [context]  correspondiente al identificador del entorno en la app
-     * parameter [mUsersChatList]  correspondiente a la lista de Chats de cada Usuario
+     * @param context correspondiente al identificador del entorno en la app
+     * @param mUsersChatList correspondiente a la lista de Chats de cada Usuario
      */
     private fun retrieveChatList(context: Context, mUsersChatList: List<ChatList>) {
         val ref = getChild("Users")
@@ -145,7 +145,7 @@ object Model {
 
     /**
      * Implementacion del metodo getUsersList usado para obtener la lista de usuarios
-     * parameter [context]  correspondiente al identificador del entorno en la app
+     * @param context correspondiente al identificador del entorno en la app
      */
     fun getUsersList(context: Context) {
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
@@ -175,8 +175,8 @@ object Model {
 
     /**
      * Implementacion del metodo searchFor utilizado para buscar usuarios por el ID
-     * parameter [string]  corresponde al nombre usuario
-     * parameter [context]  correspondiente al identificador del entorno en la app
+     * @param string corresponde al nombre usuario
+     * @param context correspondiente al identificador del entorno en la app
      */
     fun searchFor(string: String, context: Context) {
         isSearching = string != ""
@@ -216,7 +216,7 @@ object Model {
 
     /**
      * Implementacion del metodo updateStatus utilizado para actualizar el estado del Usuario
-     * parameter [status]  corresponde al estado del usuario true o false
+     * @param status corresponde al estado del usuario true o false
      */
     fun updateStatus(status: String) {
         if (currentUser == null) currentUser = firebaseAuthRef.currentUser
@@ -235,10 +235,10 @@ object Model {
 
     /**
      * Implementacion del metodo registerUser que nos permite registrar un nuevo usuario en la Base de Datos de Firebase
-     * parameter [username]  nombre de Usuario ingresado por pantalla
-     * parameter [email] correspondiente al usuario
-     * parameter [password]  contraseña del usuario
-     * parameter [context]  correspondiente al identificador del entorno en la app
+     * @param username nombre de Usuario ingresado por pantalla
+     * @param email email correspondiente al usuario
+     * @param password contraseña del usuario
+     * @param context correspondiente al identificador del entorno en la app
      */
     fun registerUser(username: String, email: String, password: String, context: Context) {
         firebaseAuthRef.createUserWithEmailAndPassword(email, password)
@@ -283,11 +283,11 @@ object Model {
 
     /**
      * Implementacion del metodo retrieveMessages que nos permite recuperar los mensajes de acuerdo a varios parametros
-     * parameter [senderId]  corresponde al id del remitente
-     * parameter [receiverId]  corresponde al id del receptor
-     * parameter [receiverImageUrl]  corresponde a la url de la imagen del receptor
-     * parameter [userIdVisit]  corresponde al id de la visita del usuario
-     * parameter [context]  correspondiente al identificador del entorno en la app
+     * @param senderId corresponde al id del remitente
+     * @param receiverId corresponde al id del receptor
+     * @param receiverImageUrl corresponde a la url de la imagen del receptor
+     * @param userIdVisit corresponde al id de la visita del usuario
+     * @param context correspondiente al identificador del entorno en la app
      */
     fun retrieveMessages(
         senderId: String,
@@ -328,10 +328,10 @@ object Model {
 
     /**
      * Implementacion del metodo sendMessageToUser que nos permite enviar un mensaje desde un remitende hasta un receptor
-     * parameter [senderId]  corresponde al id del remitende
-     * parameter [receiverId]  corresponde al id del receptor
-     * parameter [message]  corresponde al mensaje como tal
-     * parameter [userIdVisit]  corresponde al id de la visita del usuario
+     * @param senderId corresponde al id del remitende
+     * @param receiverId corresponde al id del receptor
+     * @param message corresponde al mensaje como tal
+     * @param userIdVisit corresponde al id de la visita del usuario
      */
     fun sendMessageToUser(
         senderId: String,
@@ -383,7 +383,7 @@ object Model {
 
     /**
      * Implementacion del metodo seenMessage, usado para marcar como leido el mensaje "visto"
-     * parameter [userId]  corresponde al id del usuario destinatario
+     * @param userId corresponde al id del usuario destinatario
      */
     private fun seenMessage(userId: String) {
         reference = FirebaseDatabase.getInstance().reference

@@ -43,6 +43,7 @@ class MessageChatActivity : AppCompatActivity() {
     /**
      * Al crear la vista se inicializan los datos necesarios para poblar la interfaz gráfica
      * y vincular los elementos de la interfaz con sus respectivos eventos
+     * @param savedInstanceState
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +114,7 @@ class MessageChatActivity : AppCompatActivity() {
 
     /**
      * Metodo updateMessages permite actualizar los mensajes en la vista
+     * @param chatsAdapter
      */
     fun updateMessages(chatsAdapter: ChatAdapter) {
         this.chatsAdapter = chatsAdapter
@@ -121,9 +123,9 @@ class MessageChatActivity : AppCompatActivity() {
 
     /**
      * Metodo onActivityResult obtiene un resultado de la actividad de acuerdo a ciertas acciones
-     * parameter [requestCode]
-     * parameter [resultCode]
-     * parameter [data]
+     * @param requestCode
+     * @param resultCode
+     * @param data
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

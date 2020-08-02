@@ -4,8 +4,8 @@ package com.example.messengerapp.Model.ModelClasses
  * Clase encargada de definir el esquema del objeto Users en la aplicacion
  * de mensajeria instananea
  *
- * author Ismael Martinez - Kevin Sanipatin
- * version 01/08/2020 v1
+ * @author Ismael Martinez - Kevin Sanipatin
+ * @version 01/08/2020 v1
  */
 class Users {
 

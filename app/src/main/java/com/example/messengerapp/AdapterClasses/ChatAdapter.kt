@@ -44,7 +44,7 @@ class ChatAdapter(
 
     /**
      * Clase interna que permite tomar los atributos de cada chat y mostrar en la app
-     * parameter [itemView]
+     * @param itemView
      */
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var profile_image: CircleImageView? = null
@@ -77,13 +77,13 @@ class ChatAdapter(
      * different items in the data set, it is a good idea to cache references to sub views of
      * the View to avoid unnecessary [View.findViewById] calls.
      *
-     * param parent The ViewGroup into which the new View will be added after it is bound to
+     * @param parent The ViewGroup into which the new View will be added after it is bound to
      * an adapter position.
-     * param viewType The view type of the new View.
+     * @param viewType The view type of the new View.
      *
-     * return A new ViewHolder that holds a View of the given view type.
-     * see .getItemViewType
-     * see .onBindViewHolder
+     * @return A new ViewHolder that holds a View of the given view type.
+     * @see .getItemViewType
+     * @see .onBindViewHolder
      */
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
 
@@ -101,7 +101,7 @@ class ChatAdapter(
     /**
      * Returns the total number of items in the data set held by the adapter.
      *
-     * return The total number of items in this adapter.
+     * @return The total number of items in this adapter.
      */
     override fun getItemCount(): Int {
         return mChatList.size
@@ -124,9 +124,9 @@ class ChatAdapter(
      * Override [.onBindViewHolder] instead if Adapter can
      * handle efficient partial bind.
      *
-     * param holder The ViewHolder which should be updated to represent the contents of the
+     * @param holder The ViewHolder which should be updated to represent the contents of the
      * item at the given position in the data set.
-     * param position The position of the item within the adapter's data set.
+     * @param position The position of the item within the adapter's data set.
      */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
@@ -179,7 +179,7 @@ class ChatAdapter(
 
     /**
      * Metodo getItemViewType permite identificar la seleccion de un usuario mediante la posicion del mismo dentro de una lista
-     * parameter [position]
+     * @param position
      */
     override fun getItemViewType(position: Int): Int {
         return if (mChatList[position].getSender().equals(firebaseUser!!.uid)) {
